@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SLIM Website</title>
+    <link rel="stylesheet" href="styles.css">
+    <!--The above line links the stylesheet -->
+    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- The line below creates the top nav bar -->
+    <nav class="navbar">
+        <!-- Creates a div navbar container class for the logo -->
+        <div class="navbar__container">
+            <a href="/" id="navbar__logo">SLIM</a>
+            <!--The above line creates the logo with a navigation of / (nothing) -->
+            <div class="navbar__toggle" id="mobile-menu"> 
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+            <ul class="navbar__menu">
+                <li class="navbar__item">
+                    <a href="/" class="navbar__links">
+                        Home
+                    </a>
+                </li>
+                <li class="navbar__item">
+                    <a href="/CreateEvent.html" class="navbar__links">
+                        Create Event
+                    </a>
+                </li>
+                <li class="navbar__btn">
+                    <a href="/SignUp.html" class="button">
+                        Sign Up 
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="form-section">
+            <h2>Event Details</h2>
+            <form>
+                <label for="event-name">Event Name*</label>
+                <input type="text" id="event-name" name="event-name" placeholder="Enter event name" required>
+
+                <label for="start-time">Start time*</label>
+                <input type="datetime-local" id="start-time" name="start-time" required>
+                
+                <label for="end-time">End time*</label>
+                <input type="datetime-local" id="end-time" name="end-time" required>
+
+                <label for="venue-name">Venue Name (optional)</label>
+                <input type="text" id="venue-name" name="venue-name" placeholder="Enter venue name">
+                
+                <label for="address">Address*</label>
+                <input type="text" id="search-input" name="search-input" placeholder="Enter address" required>
+
+                <label for="category">Choose a Category (optional)</label>
+                <select id="category" name="category">
+                    <option value="">Select a category</option>
+                    <option value="">Festival</option>
+                    <option value="">Party</option>
+                    <option value="">Birthday</option>
+                    <option value="">College Greek Life Party</option>
+                    <option value="">Concert</option>
+                    <option value="">Cruise</option>
+                    <option value="">Comedy</option>
+                    <option value="">Art</option>
+                    <option value="">Gala</option>
+                    <option value="">Music Festival</option>
+                    
+                </select>
+
+                <label for="summary">Event Description*</label>
+                <input type="text" id="summary" name="summary" placeholder="Enter event description" required>
+
+                <label for="email">Email*</label>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+
+                <button type="submit">Create Event</button>
+            </form>
+        </div>
+        <div class="image-section">
+            <img id="party-image" src="Images/party-image.jpg" alt="Party Image">
+            <button class="change-image-btn">
+                <img src="Images/GalleryIcon.png" alt="Change Image">
+            </button>
+            <input type="file" id="image-upload" accept="image/*">
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+     <div class="footer__container">
+        <div class="footer__link">
+            <div class="footer__link--wrapper">
+                <div class="footer__link--items">
+                    <h2>About Us</h2>
+                    <a href="/">How it works</a>
+                    <a href="/">Testimonals</a>
+                    <a href="/">Careers</a>
+                    <a href="/">Investments</a>
+                    <a href="/">Terms of service</a>
+                </div>
+                <div class="footer__link--items">
+                    <h2>Contact Us</h2>
+                    <a href="/">Contact</a>
+                    <a href="/">Support</a>
+                    <a href="/">Destinations</a>
+                    <a href="/">Sponsorships</a>
+                </div>
+            </div>
+            <div class="footer__link--wrapper">
+                <div class="footer__link--items">
+                    <h2>Videos</h2>
+                    <a href="/">Submit Video</a>
+                    <a href="/">Ambassadors</a>
+                    <a href="/">Agency</a>
+                    <a href="/">Influencers</a>
+                </div>
+                <div class="footer__link--items">
+                    <h2>Social Media</h2>
+                    <a href="/">Instagram</a>
+                    <a href="/">Facebook</a>
+                    <a href="/">Youtube</a>
+                    <a href="/">Twitter</a>
+                </div>
+            </div>
+        </div>
+        <div class="social__media">
+            <div class="social__media--wrap">
+                <div class="footer__logo">
+                    <a href="/"><i class="fas fa-gem"></i>NEXT</a>
+                </div>
+                <p class="website__rights">NEXT 2020. All rights reserved</p>
+            </div>
+        </div>
+     </div>
+
+    <script src="app.js" ></script>
+
+    <script>
+        const imageElement = document.getElementById('party-image');
+        const fileInput = document.getElementById('image-upload');
+        const changeImageButton = document.querySelector('.change-image-btn');
+
+        // Function to trigger file input click
+        function triggerFileInput() {
+            fileInput.click();
+        }
+
+        // Event listeners for image and button clicks
+        imageElement.addEventListener('click', triggerFileInput);
+        changeImageButton.addEventListener('click', triggerFileInput);
+
+        // Change the image when a new file is selected
+        fileInput.addEventListener('change', function(event) {
+            if (event.target.files && event.target.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageElement.src = e.target.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        });
+    </script> 
+</body>
+</html>
