@@ -8,7 +8,7 @@
     <!--The above line links the stylesheet -->
     <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="create-event-page">
 
     <!-- The line below creates the top nav bar -->
     <nav class="navbar">
@@ -17,7 +17,6 @@
             <a href="/" id="navbar__logo">MOVES</a>
             <!--The above line creates the logo with a navigation of / (nothing) -->
             <div class="navbar__toggle" id="mobile-menu"> 
-                <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -39,7 +38,7 @@
                     </a>
                 </li>
                 <li class="navbar__btn">
-                    <a href="/SignUp.html" class="button">
+                    <a href="/Login.html" class="button">
                         Sign Up 
                     </a>
                 </li>
@@ -69,16 +68,16 @@
                 <label for="category">Choose a Category (optional)</label>
                 <select id="category" name="category">
                     <option value="">Select a category</option>
-                    <option value="">Festival</option>
-                    <option value="">Party</option>
-                    <option value="">Birthday</option>
-                    <option value="">College Greek Life Party</option>
-                    <option value="">Concert</option>
-                    <option value="">Cruise</option>
-                    <option value="">Comedy</option>
-                    <option value="">Art</option>
-                    <option value="">Gala</option>
-                    <option value="">Music Festival</option>
+                    <option value="Festival">Festival</option>
+                    <option value="Party">Party</option>
+                    <option value="Birthday">Birthday</option>
+                    <option value="College Greek Life Party">College Greek Life Party</option>
+                    <option value="Concert">Concert</option>
+                    <option value="Cruise">Cruise</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Art">Art</option>
+                    <option value="Gala">Gala</option>
+                    <option value="Music Festival">Music Festival</option>
                     
                 </select>
 
@@ -92,7 +91,7 @@
             </form>
         </div>
         <div class="image-section">
-            <img id="party-image" src="Images/party-image.jpg" alt="Party Image">
+            <img id="party-image" src="Images/gpt-party.webp" alt="Party Image">
             <button class="change-image-btn">
                 <img src="Images/GalleryIcon.png" alt="Change Image">
             </button>
@@ -174,5 +173,48 @@
             }
         });
     </script> 
+    <script>
+        // Get the datetime-local input element
+        const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+    
+        datetimeInputs.forEach(input => {
+            // Add an event listener for when the value changes
+            input.addEventListener('input', function () {
+                if (this.value) {
+                    // If a date is entered, change the text color to your desired input color
+                    this.style.color = 'black'; // Adjust this color as needed
+                } else {
+                    // If the field is empty, set the color to the placeholder color
+                    this.style.color = '#908d8d'; // Adjust this to your placeholder color
+                }
+            });
+    
+            // Trigger the color change when the page loads based on current value
+            if (input.value) {
+                input.style.color = 'black'; // Set input text color
+            } else {
+                input.style.color = '#908d8d'; // Set placeholder-like color
+            }
+        });
+
+        // For select elements (e.g., "Select a Category")
+        const selectElement = document.getElementById('category');
+        selectElement.addEventListener('change', function () {
+            if (this.value === "") {
+                // Placeholder-like color if no category is selected
+                this.style.color = '#908d8d';
+            } else {
+                // Input text color when a category is selected
+                this.style.color = 'black';
+            }
+        });
+
+        // Set initial color for the select element
+        if (selectElement.value === "") {
+            selectElement.style.color = '#908d8d'; // Placeholder-like color
+        } else {
+            selectElement.style.color = 'black'; // Input text color
+        }
+    </script>
 </body>
 </html>
