@@ -12,9 +12,13 @@ module.exports = {
     mode: 'development',
     module: {
         rules: [
-            { 
+            {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader'],
+                use: ['style-loader', 'css-loader'], // These loaders handle CSS files
+            },
+            {
+                test: /\.(png|jpe?g|gif|svg)$/i,
+                type: 'asset/resource', // or use 'file-loader' if needed
             },
         ],
     },
@@ -35,20 +39,25 @@ module.exports = {
             template: './src/createevent.html',
             filename: 'createevent.html',
         }),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'src', // Copies all files from 'src'
+                    to: path.resolve(__dirname, 'dist'),  // Places them in 'dist'
+                    globOptions: {
+                        ignore: [
+                            '**/index.html',   // Exclude files handled by HtmlWebpackPlugin
+                            '**/login.html',
+                            '**/signup.html',
+                            '**/createevent.html',
+                        ],
+                    },
+                },
+            ],
+        }),
     ],
     devServer: {
         static: './dist',
-    },
-    module: {
-        rules: [
-            {
-                test: /\.css$/,
-                use: ['style-loader', 'css-loader'], // These loaders handle CSS files
-            },
-            {
-                test: /\.(png|jpe?g|gif|svg)$/i,
-                type: 'asset/resource', // or use 'file-loader' if needed
-            },
-        ],
+        hot: true,
     },
 };
