@@ -39,6 +39,10 @@ module.exports = {
             template: './src/createevent.html',
             filename: 'createevent.html',
         }),
+        new HtmlWebpackPlugin({
+            template: './src/forgot.html',
+            filename: 'forgot.html',
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -50,6 +54,7 @@ module.exports = {
                             '**/login.html',
                             '**/signup.html',
                             '**/createevent.html',
+                            '**/forgot.html',
                         ],
                     },
                 },

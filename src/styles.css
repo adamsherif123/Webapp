@@ -408,6 +408,12 @@ body {
 }
 
 /* Login & Sign Up Page */
+
+.moves-title{
+   text-decoration: none;
+   color: var(--primary-color)
+}
+
 .login-page {
    display: flex;
    justify-content: center;

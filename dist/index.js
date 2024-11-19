@@ -1,9 +1,17 @@
+const menu = document.querySelector('#mobile-menu')
+const menuLinks = document.querySelector('.navbar__menu')
+
+menu.addEventListener('click', function() {
+    menu.classList.toggle('is-active')
+    menuLinks.classList.toggle('active')
+})
+
 // styles
 import './styles.css';
 
 // Import Firebase auth and Firestore from the initialization file
 import { auth, db } from './firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
 import { setDoc, getDoc, doc } from "firebase/firestore";
 
 // Handle signup
@@ -64,5 +72,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert(`Error: ${error.message}`);
             }
         });
-    }     
+    }
+
+    const forgotForm = document.getElementById('forgot-form');
+    if (forgotForm) {
+        console.log('yo');
+        forgotForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the default form submission
+
+            const email = document.getElementById('forgot-email').value;
+
+            if (!email) {
+                alert('Please enter your email address.');
+                return;
+            }
+
+            try {
+            // Send the password reset email
+                await sendPasswordResetEmail(auth, email);
+                alert('Password reset email sent. Please check your inbox.');
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+            }
+        });
+    } 
+    
 });
