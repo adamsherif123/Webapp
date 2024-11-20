@@ -93,6 +93,7 @@ body {
    align-items: center;
    padding: 0 1rem;
    width: 100%;
+   white-space: nowrap;
 }
 
 .button {

@@ -43,6 +43,10 @@ module.exports = {
             template: './src/forgot.html',
             filename: 'forgot.html',
         }),
+        new HtmlWebpackPlugin({
+            template: './src/dashboard.html',
+            filename: 'dashboard.html',
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -55,6 +59,7 @@ module.exports = {
                             '**/signup.html',
                             '**/createevent.html',
                             '**/forgot.html',
+                            '**/dashboard.html'
                         ],
                     },
                 },

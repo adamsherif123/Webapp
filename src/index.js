@@ -1,10 +1,12 @@
 const menu = document.querySelector('#mobile-menu')
 const menuLinks = document.querySelector('.navbar__menu')
 
-menu.addEventListener('click', function() {
-    menu.classList.toggle('is-active')
-    menuLinks.classList.toggle('active')
-})
+if (menu && menuLinks) {
+    menu.addEventListener('click', function() {
+        menu.classList.toggle('is-active');
+        menuLinks.classList.toggle('active');
+    });
+}
 
 // styles
 import './styles.css';
@@ -59,6 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (userData.approved) {
                         alert('Login successful. You are approved.');
                         // Proceed to redirect the user or perform other actions
+                        window.location.href = '/dashboard.html';
                     } else {
                         alert('Your account is not yet approved. Please wait for admin approval.');
                         // Optionally sign out the user
