@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 alert('Signup successful. Waiting for admin approval.');
             } catch (error) {
+                console.error('Signup error:', error.code, error.message);
                 alert(`Error: ${error.message}`);
             }
         });

@@ -348,14 +348,19 @@ body {
    padding: 15px;
    margin-top: 5px;
    border: none;
-   border-radius: 5px;
+   border-radius: 10px;
    background-color: var(--input-bg-color);
    color: var(--text-color);
+   font-family: var(--font-family);
+   font-style: normal; /* or italic, if that's your preference */
+   font-size: 16px;    /* ensure a consistent size across fields */
 }
 
-.form-section input::placeholder,
+.form-section input::placeholder, 
 .form-section textarea::placeholder {
    color: var(--placeholder-color);
+   font-family: var(--font-family);
+   font-style: normal; /* in case some browsers default to italic */
 }
 
 .form-section button {
@@ -523,6 +528,10 @@ body {
    text-decoration: underline;
 }
 
+
+ 
+
+
 /* Media Queries */
 @media screen and (max-width: 960px) {
    .navbar__container {
@@ -658,3 +667,4 @@ body {
       height: 325px;
    }
 }
+
