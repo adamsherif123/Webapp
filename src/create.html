@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up Page</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body class="form-page">
+    <div>
+    <div class="form-section">
+        <form id="signup-form" action="">
+            <a class="moves-title" href="./"><h1>MOVES</h1></a>
+                
+            <label for="event-name">Event Name*</label>
+            <input type="text" id="event-name" name="event-name" placeholder="Enter event name..." required>
+
+            <label for="start-time">Start time*</label>
+            <input type="datetime-local" id="start-time" name="start-time" required>
+            
+            <label for="end-time">End time*</label>
+            <input type="datetime-local" id="end-time" name="end-time" required>
+
+            <label for="venue-name">Venue Name (optional)</label>
+            <input type="text" id="venue-name" name="venue-name" placeholder="Enter venue name...">
+            
+            <label for="address">Location*</label>
+            <input type="text" id="search-input" name="search-input" placeholder="Enter address..." required>
+
+            <label for="event-type">Event Type*</label>
+            <select class="dropdown" id="event-type" name="event-type" required>
+                <option value="">Choose an option</option>
+                <option value="Festival">Festival</option>
+                <option value="Party">Party</option>
+                <option value="Birthday">Birthday</option>
+                <option value="College Greek Life Party">Frat/Sorority Party</option>
+                <option value="Concert">Concert</option>
+                <option value="Cruise">Cruise</option>
+                <option value="Comedy">Comedy Show</option>
+                <option value="Art">Art</option>
+                <option value="Gala">Gala</option>
+                <option value="Music Festival">Music Festival</option>
+                <option value="Other">Other (please specify)</option>
+            </select>
+            <div id="other-event-type-container" style="display: none; margin-top: 10px;">
+                <label for="other-event-type">Please specify event type:</label>
+                <input type="text" id="other-event-type" name="other-event-type" placeholder="Enter your event type..." />
+            </div>
+
+            <label for="invite-type">Who's Welcome?*</label>
+            <select class="dropdown" id="invite-type" name="invite-type" required>
+                <option value="">Choose an option</option>
+                <option value="public">Everyone on the Moves App!</option>
+                <option value="followers">Followers only</option>    
+            </select>
+
+            <label for="event=description">Event Description (optional) </label>
+            <textarea id="event-description" placeholder="Tell people about your event..."></textarea>
+
+            <label for="event-photo">Photo (optional):</label>
+            <input type="file" id="event-photo" accept="image/*"/>
+ 
+            <button type="submit" class="btn">Create Event</button>
+
+            <div class="register-link">
+                <p>Don't want to create this event? <a href="./dashboard.html">Exit to homepage</a></p>
+            </div>
+        </form>
+    </div>
+    </div>
+
+    <script>
+        // Other option selected
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventTypeSelect = document.getElementById('event-type');
+            const otherEventTypeContainer = document.getElementById('other-event-type-container');
+            const otherEventTypeInput = document.getElementById('other-event-type');
+
+            eventTypeSelect.addEventListener('change', function () {
+                if (this.value === "Other") {
+                    otherEventTypeContainer.style.display = "block"; // Show "Other" input
+                    otherEventTypeInput.required = true; // Make it required
+                } else {
+                    otherEventTypeContainer.style.display = "none"; // Hide "Other" input
+                    otherEventTypeInput.required = false; // Remove the required attribute
+                    otherEventTypeInput.value = ""; // Clear the input if it's hidden
+                }
+            });
+        });
+        // Get the datetime-local input element
+        const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+    
+        datetimeInputs.forEach(input => {
+            // Add an event listener for when the value changes
+            input.addEventListener('input', function () {
+                if (this.value) {
+                    // If a date is entered, change the text color to your desired input color
+                    this.style.color = 'black'; // Adjust this color as needed
+                } else {
+                    // If the field is empty, set the color to the placeholder color
+                    this.style.color = '#908d8d'; // Adjust this to your placeholder color
+                }
+            });
+    
+            // Trigger the color change when the page loads based on current value
+            if (input.value) {
+                input.style.color = 'black'; // Set input text color
+            } else {
+                input.style.color = '#908d8d'; // Set placeholder-like color
+            }
+        });
+
+        // For select elements (e.g., "Select a Category")
+        const selectElements = document.getElementsByClassName('dropdown');
+        for (const selectElement of selectElements) {
+            selectElement.addEventListener('change', function () {
+                if (this.value === "") {
+                    // Placeholder-like color if no category is selected
+                    this.style.color = '#908d8d';
+                } else {
+                    // Input text color when a category is selected
+                    this.style.color = 'black';
+                }
+            });
+        
+            // Set initial color for the select element
+            if (selectElement.value === "") {
+                selectElement.style.color = '#908d8d'; // Placeholder-like color
+            } else {
+                selectElement.style.color = 'black'; // Input text color
+            }
+        }
+    </script>
+
+    
+
+</body>
+</html>
