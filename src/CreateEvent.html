@@ -14,7 +14,7 @@
     <nav class="navbar">
         <!-- Creates a div navbar container class for the logo -->
         <div class="navbar__container">
-            <a href="/" id="navbar__logo">MOVES</a>
+            <a href="/" class="navbar__logo"><h1>MOVES</h1></a>
             <!--The above line creates the logo with a navigation of / (nothing) -->
             <div class="navbar__toggle" id="mobile-menu"> 
                 <span class="bar"></span>
@@ -33,6 +33,16 @@
                     </a>
                 </li>
                 <li class="navbar__btn">
+                    <a href="./about.html" class="button">
+                        Learn More
+                    </a>
+                </li>
+                <li class="navbar__btn">
+                    <a href="./" class="button">
+                        Contact Us
+                    </a>
+                </li>
+                <li class="navbar__btn">
                     <a href="./" class="button">
                         Log Out
                     </a>
@@ -43,10 +53,10 @@
 
     <div class="container">
         <div class="form-section">
-            <h2>Event Details</h2>
+            <h2>Enter event details</h2>
             <form id="event-form">
-                <label for="event-name">Event Name*</label>
-                <input type="text" id="event-name" name="event-name" placeholder="Enter event name" required>
+                <label for="event-name">Event name*</label>
+                <input type="text" id="event-name" name="event-name" placeholder="Enter event name..." required>
 
                 <label for="start-time">Start time*</label>
                 <input type="datetime-local" id="start-time" name="start-time" required>
@@ -54,35 +64,61 @@
                 <label for="end-time">End time*</label>
                 <input type="datetime-local" id="end-time" name="end-time" required>
 
-                <label for="venue-name">Venue Name (optional)</label>
-                <input type="text" id="venue-name" name="venue-name" placeholder="Enter venue name">
+                <label for="venue-name">Venue name (optional)</label>
+                <input type="text" id="venue-name" name="venue-name" placeholder="Enter venue name...">
                 
-                <label for="address">Address*</label>
-                <input type="text" id="search-input" name="search-input" placeholder="Enter address" required>
+                <label for="address">Location*</label>
+                <input type="text" id="search-input" name="search-input" placeholder="Enter address..." required>
 
-                <label for="category">Choose a Category (optional)</label>
-                <select id="category" name="category">
-                    <option value="">Select a category</option>
+                <label for="event-type">Event type*</label>
+                <select class="dropdown" id="event-type" name="event-type" required>
+                    <option value="">Choose an option</option>
                     <option value="Festival">Festival</option>
                     <option value="Party">Party</option>
                     <option value="Birthday">Birthday</option>
-                    <option value="College Greek Life Party">College Greek Life Party</option>
+                    <option value="College Greek Life Party">Frat/Sorority party</option>
                     <option value="Concert">Concert</option>
                     <option value="Cruise">Cruise</option>
-                    <option value="Comedy">Comedy</option>
+                    <option value="Comedy">Comedy show</option>
                     <option value="Art">Art</option>
                     <option value="Gala">Gala</option>
-                    <option value="Music Festival">Music Festival</option>
-                    
+                    <option value="Music Festival">Music festival</option>
+                    <option value="Other">Other (please specify)</option>
+                </select>
+                <div id="other-event-type-container" style="display: none; margin-top: 10px;">
+                    <label for="other-event-type">Please specify event type:</label>
+                    <input type="text" id="other-event-type" name="other-event-type" placeholder="Enter your event type..." />
+                </div>
+
+                <label for="invite-type">Who can see the event?*</label>
+                <select class="dropdown" id="invite-type" name="invite-type" required>
+                    <option value="">Choose an option</option>
+                    <option value="public">Everyone on the Moves App!</option>
+                    <option value="followers">Followers only</option>    
                 </select>
 
-                <label for="summary">Event Description*</label>
-                <input type="text" id="summary" name="summary" placeholder="Enter event description" required>
+                <label for="ticketing">Do you want to sell tickets?*</label>
+                <select class="dropdown" id="ticketing" name="ticketing" required>
+                    <option value="">Choose an option</option>
+                    <option value="No">No</option>
+                    <option value="Yes">Yes</option>
+                </select>
+                <div id="ticket-price-container" style="display: none; margin-top: 10px;">
+                    <label for="ticket-price">Ticket price (USD):</label>
+                    <input type="number" id="ticket-price" name="ticket-price" placeholder="Enter ticket price (USD)..." />
+                </div>
 
-                <label for="email">Email*</label>
-                <input type="email" id="email" name="email" placeholder="Email" required>
+                <label for="event=description">Event description (optional) </label>
+                <textarea id="event-description" placeholder="Tell people about your event..."></textarea>
 
-                <button type="submit">Create Event</button>
+                <label for="event-photo">Photo (optional):</label>
+                <input type="file" id="event-photo" accept="image/*"/>
+    
+                <button type="submit" class="btn">Create Event</button>
+
+                <div class="register-link">
+                    <p>Don't want to create this event? <a href="./dashboard.html" class="hyperlink">Back to homepage</a></p>
+                </div>
             </form>
             
             
@@ -97,51 +133,11 @@
     </div>
 
     <!-- Footer Section -->
-     <div class="footer__container">
-        <div class="footer__link">
-            <div class="footer__link--wrapper">
-                <div class="footer__link--items">
-                    <h2>About Us</h2>
-                    <a href="/">How it works</a>
-                    <a href="/">Testimonals</a>
-                    <a href="/">Careers</a>
-                    <a href="/">Investments</a>
-                    <a href="/">Terms of service</a>
-                </div>
-                <div class="footer__link--items">
-                    <h2>Contact Us</h2>
-                    <a href="/">Contact</a>
-                    <a href="/">Support</a>
-                    <a href="/">Destinations</a>
-                    <a href="/">Sponsorships</a>
-                </div>
-            </div>
-            <div class="footer__link--wrapper">
-                <div class="footer__link--items">
-                    <h2>Videos</h2>
-                    <a href="/">Submit Video</a>
-                    <a href="/">Ambassadors</a>
-                    <a href="/">Agency</a>
-                    <a href="/">Influencers</a>
-                </div>
-                <div class="footer__link--items">
-                    <h2>Social Media</h2>
-                    <a href="/">Instagram</a>
-                    <a href="/">Facebook</a>
-                    <a href="/">Youtube</a>
-                    <a href="/">Twitter</a>
-                </div>
-            </div>
-        </div>
-        <div class="social__media">
-            <div class="social__media--wrap">
-                <div class="footer__logo">
-                    <a href="/"><i class="fas fa-gem"></i>MOVES</a>
-                </div>
-                <p class="website__rights">MOVES 2020. All rights reserved</p>
-            </div>
-        </div>
-     </div>
+    <div class="footer__container">
+        <p>We are constantly working to improve our product. For feedback/questions, reach us at moves@email.com or +12908493190.</p>
+    </div>
+
+    <!--JavaScript-->
 
     <script>
         const imageElement = document.getElementById('party-image');
@@ -168,7 +164,87 @@
             }
         });
     </script> 
-   
+    <script>
+        // Other option selected for event type
+        document.addEventListener('DOMContentLoaded', () => {
+            const eventTypeSelect = document.getElementById('event-type');
+            const otherEventTypeContainer = document.getElementById('other-event-type-container');
+            const otherEventTypeInput = document.getElementById('other-event-type');
+
+            eventTypeSelect.addEventListener('change', function () {
+                if (this.value === "Other") {
+                    otherEventTypeContainer.style.display = "block"; // Show "Other" input
+                    otherEventTypeInput.required = true; // Make it required
+                } else {
+                    otherEventTypeContainer.style.display = "none"; // Hide "Other" input
+                    otherEventTypeInput.required = false; // Remove the required attribute
+                    otherEventTypeInput.value = ""; // Clear the input if it's hidden
+                }
+            });
+        });
+
+        // If selling tickets, ask for price
+        document.addEventListener('DOMContentLoaded', () => {
+            const ticketingSelect = document.getElementById('ticketing');
+            const ticketPriceContainer = document.getElementById('ticket-price-container');
+            const ticketPriceInput = document.getElementById('ticket-price');
+
+            ticketingSelect.addEventListener('change', function () {
+                if (this.value === "Yes") {
+                    ticketPriceContainer.style.display = "block"; // Show "Other" input
+                    ticketPriceInput.required = true; // Make it required
+                } else {
+                    ticketPriceContainer.style.display = "none"; // Hide "Other" input
+                    ticketPriceInput.required = false; // Remove the required attribute
+                    ticketPriceInput.value = ""; // Clear the input if it's hidden
+                }
+            });
+        });
+
+        // Get the datetime-local input element
+        const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
+    
+        datetimeInputs.forEach(input => {
+            // Add an event listener for when the value changes
+            input.addEventListener('input', function () {
+                if (this.value) {
+                    // If a date is entered, change the text color to your desired input color
+                    this.style.color = 'black'; // Adjust this color as needed
+                } else {
+                    // If the field is empty, set the color to the placeholder color
+                    this.style.color = '#908d8d'; // Adjust this to your placeholder color
+                }
+            });
+    
+            // Trigger the color change when the page loads based on current value
+            if (input.value) {
+                input.style.color = 'black'; // Set input text color
+            } else {
+                input.style.color = '#908d8d'; // Set placeholder-like color
+            }
+        });
+
+       // For select elements (e.g., "Select a Category")
+       const selectElements = document.getElementsByClassName('dropdown');
+        for (const selectElement of selectElements) {
+            selectElement.addEventListener('change', function () {
+                if (this.value === "") {
+                    // Placeholder-like color if no category is selected
+                    this.style.color = '#908d8d';
+                } else {
+                    // Input text color when a category is selected
+                    this.style.color = 'black';
+                }
+            });
+        
+            // Set initial color for the select element
+            if (selectElement.value === "") {
+                selectElement.style.color = '#908d8d'; // Placeholder-like color
+            } else {
+                selectElement.style.color = 'black'; // Input text color
+            }
+        }
+    </script>
 
     <script src="bundle.js"></script>
 

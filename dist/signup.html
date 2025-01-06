@@ -1,34 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up Page</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
-
-    
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up Page</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 <script defer src="bundle.js"></script></head>
-<body class="login-page">
-    
-    <div class="wrapper">
+<body class="form-page">
+    <div>
+    <div class="form-section">
         <form id="signup-form" action="">
-            <a class=moves-title href="./"><h1><em>MOVES</em></h1></a>
-            <div class="input-box">
-                <input type="email" id="signup-email" placeholder="Email" required>
-                <i class='bx bxs-user'></i>
-            </div>
-            <div class="input-box">
-                <input type="password" id="signup-password" placeholder="Password" required>
-                <i class='bx bxs-lock-alt' ></i>
-            </div>
+            <a class="moves-title" href="./"><h1>MOVES</h1></a>
+                
+                <label for="signup-email">Email*</label>
+                <input type="email" id="signup-email" placeholder="Enter email..." required />
+     
+                <label for="organization-phone">Phone Number (optional)</label>
+                <input type="tel" id="organization-phone" placeholder="Enter phone number..." />
+
+                <label for="signup-password">Password*</label>
+                <input type="password" id="signup-password" placeholder="Enter password..." required />
+          
+                <label for="signup-password-confirm">Confirm Password*</label>
+                <input type="password" id="signup-password-confirm" placeholder="Confirm password..." required />
+          
+                <label for="organization-name">Organization Name*</label>
+                <input type="text" id="organization-name" placeholder="Enter organization name..." required/>
+         
+                <label for="organization-type">Organization Type*</label>
+                <select id="organization-type" name="organization-type">
+                    <option value="">Select an option</option>
+                    <option value="Bar">Bar</option>
+                    <option value="Restaurant">Restaurant</option>
+                    <option value="Night Club">Night Club</option>
+                    <option value="Greek Life">Greek Life</option>
+                    <option value="Student Club">Student Club</option>
+                    <option value="Other">Other (please specify)</option>      
+                </select>
+                <div id="other-organization-type-container" style="display: none; margin-top: 10px;">
+                    <label for="other-organization-type">Please specify organization type:</label>
+                    <input type="text" id="other-organization-type" name="other-organization-type" placeholder="Enter organization type..." />
+                </div>
+       
+                <label for="organization-description">Description/About (optional)</label>
+                <textarea id="organization-description" placeholder="Tell us about your organization..."></textarea>
+
+                <label for="organization-location">Primary Location (optional) </label>
+                <input type="text" id="organization-location" placeholder="Enter a location..." />
+      
+                <label for="organization-photo">Photo (optional):</label>
+                <input type="file" id="organization-photo" accept="image/*"/>
+ 
             <button type="submit" class="btn">Sign Up</button>
+
             <div class="register-link">
                 <p>Already have an account? <a href="./login.html">Login</a></p>
-            </div> 
+            </div>
         </form>
     </div>
+    </div>
+
+    <script>
+        // Other option selected
+        document.addEventListener('DOMContentLoaded', () => {
+            const orgTypeSelect = document.getElementById('organization-type');
+            const otherOrgTypeContainer = document.getElementById('other-organization-type-container');
+            const otherOrgTypeInput = document.getElementById('other-organization-type');
+
+            orgTypeSelect.addEventListener('change', function () {
+                if (this.value === "Other") {
+                    otherOrgTypeContainer.style.display = "block"; // Show "Other" input
+                    otherOrgTypeInput.required = true; // Make it required
+                } else {
+                    otherOrgTypeContainer.style.display = "none"; // Hide "Other" input
+                    otherOrgTypeInput.required = false; // Remove the required attribute
+                    otherOrgTypeInput.value = ""; // Clear the input if it's hidden
+                }
+            });
+        });
+
+        // For select elements (e.g., "Select a Category")
+        const selectElement = document.getElementById('organization-type');
+        selectElement.addEventListener('change', function () {
+            if (this.value === "") {
+                // Placeholder-like color if no category is selected
+                this.style.color = '#908d8d';
+            } else {
+                // Input text color when a category is selected
+                this.style.color = 'black';
+            }
+        });
+
+        // Set initial color for the select element
+        if (selectElement.value === "") {
+            selectElement.style.color = '#908d8d'; // Placeholder-like color
+        } else {
+            selectElement.style.color = 'black'; // Input text color
+        }
+    </script>
 
 </body>
 </html>

@@ -35,8 +35,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     approved: false
                 });
 
-                alert('Signup successful. Waiting for admin approval.');
+                alert('Signup successful. You can log in as soon as we approve your account!');
             } catch (error) {
+                console.error('Signup error:', error.code, error.message);
                 alert(`Error: ${error.message}`);
             }
         });

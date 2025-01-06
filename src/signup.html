@@ -37,17 +37,30 @@
                     <option value="Night Club">Night Club</option>
                     <option value="Greek Life">Greek Life</option>
                     <option value="Student Club">Student Club</option>
-                    <option value="Other">Other</option>      
+                    <option value="Other">Other (please specify)</option>      
                 </select>
+                <div id="other-organization-type-container" style="display: none; margin-top: 10px;">
+                    <label for="other-organization-type">Please specify organization type:</label>
+                    <input type="text" id="other-organization-type" name="other-organization-type" placeholder="Enter organization type..." />
+                </div>
        
                 <label for="organization-description">Description/About (optional)</label>
-                <textarea id="organization-description" placeholder="Tell users about your organization..."></textarea>
+                <textarea id="organization-description" placeholder="Tell us about your organization..."></textarea>
 
                 <label for="organization-location">Primary Location (optional) </label>
                 <input type="text" id="organization-location" placeholder="Enter a location..." />
       
                 <label for="organization-photo">Photo (optional):</label>
-                <input type="file" id="organization-photo" accept="image/*" />
+                <input type="file" id="organization-photo" accept="image/*"/>
+
+                <label for="multi-select-input">Link your Moves App account(s) (optional):</label>
+                <div class="multi-select-container">
+                    <div id="selected-users" class="selected-users"></div>
+                        <input type="text" id="multi-select-input" placeholder="Search for users..." autocomplete="off">
+                    <div id="suggestions-box" class="suggestions-box"></div>
+                </div>
+                
+    
  
             <button type="submit" class="btn">Sign Up</button>
 
@@ -59,6 +72,25 @@
     </div>
 
     <script>
+        
+        // Other option selected
+        document.addEventListener('DOMContentLoaded', () => {
+            const orgTypeSelect = document.getElementById('organization-type');
+            const otherOrgTypeContainer = document.getElementById('other-organization-type-container');
+            const otherOrgTypeInput = document.getElementById('other-organization-type');
+
+            orgTypeSelect.addEventListener('change', function () {
+                if (this.value === "Other") {
+                    otherOrgTypeContainer.style.display = "block"; // Show "Other" input
+                    otherOrgTypeInput.required = true; // Make it required
+                } else {
+                    otherOrgTypeContainer.style.display = "none"; // Hide "Other" input
+                    otherOrgTypeInput.required = false; // Remove the required attribute
+                    otherOrgTypeInput.value = ""; // Clear the input if it's hidden
+                }
+            });
+        });
+
         // For select elements (e.g., "Select a Category")
         const selectElement = document.getElementById('organization-type');
         selectElement.addEventListener('change', function () {
@@ -77,6 +109,58 @@
         } else {
             selectElement.style.color = 'black'; // Input text color
         }
+
+        /* Link moves accounts form stuff */
+        document.addEventListener("DOMContentLoaded", () => {
+            const users = ["John Doe", "Jane Smith", "Alice Johnson", "Bob Brown", "Michael Scott"];
+            const input = document.getElementById("multi-select-input");
+            const suggestionsBox = document.getElementById("suggestions-box");
+            const selectedUsersContainer = document.getElementById("selected-users");
+
+            let selectedUsers = [];
+
+            input.addEventListener("input", () => {
+                const query = input.value.toLowerCase();
+                suggestionsBox.innerHTML = ""; // Clear previous suggestions
+                if (query) {
+                    const filteredUsers = users.filter(user => 
+                        user.toLowerCase().includes(query) && !selectedUsers.includes(user)
+                    );
+                    filteredUsers.forEach(user => {
+                        const suggestionDiv = document.createElement("div");
+                        suggestionDiv.textContent = user;
+                        suggestionDiv.addEventListener("click", () => {
+                            addSelectedUser(user);
+                            input.value = "";  // Clear input after selection
+                            suggestionsBox.innerHTML = "";  // Hide suggestions after selecting
+                        });
+                        suggestionsBox.appendChild(suggestionDiv);
+                    });
+                }
+            });
+
+            function addSelectedUser(user) {
+                if (!selectedUsers.includes(user)) {
+                    selectedUsers.push(user);
+                    const tag = document.createElement("div");
+                    tag.className = "tag";
+                    tag.innerHTML = `${user} <span>&times;</span>`;
+                    tag.querySelector("span").addEventListener("click", () => removeSelectedUser(user, tag));
+                    selectedUsersContainer.appendChild(tag);
+                }
+            }
+
+            function removeSelectedUser(user, tagElement) {
+                selectedUsers = selectedUsers.filter(selected => selected !== user);
+                selectedUsersContainer.removeChild(tagElement);
+            }
+
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest(".multi-select-container")) {
+                    suggestionsBox.innerHTML = "";  // Hide suggestions if clicked outside
+                }
+            });
+        });
     </script>
 
 </body>
