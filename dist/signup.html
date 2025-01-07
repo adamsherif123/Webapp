@@ -52,6 +52,15 @@
       
                 <label for="organization-photo">Photo (optional):</label>
                 <input type="file" id="organization-photo" accept="image/*"/>
+
+                <label for="multi-select-input">Link your Moves App account(s) (optional):</label>
+                <div class="multi-select-container">
+                    <div id="selected-users" class="selected-users"></div>
+                        <input type="text" id="multi-select-input" placeholder="Search for users..." autocomplete="off">
+                    <div id="suggestions-box" class="suggestions-box"></div>
+                </div>
+                
+    
  
             <button type="submit" class="btn">Sign Up</button>
 
@@ -63,6 +72,7 @@
     </div>
 
     <script>
+        
         // Other option selected
         document.addEventListener('DOMContentLoaded', () => {
             const orgTypeSelect = document.getElementById('organization-type');
@@ -99,6 +109,58 @@
         } else {
             selectElement.style.color = 'black'; // Input text color
         }
+
+        /* Link moves accounts form stuff */
+        document.addEventListener("DOMContentLoaded", () => {
+            const users = ["John Doe", "Jane Smith", "Alice Johnson", "Bob Brown", "Michael Scott"];
+            const input = document.getElementById("multi-select-input");
+            const suggestionsBox = document.getElementById("suggestions-box");
+            const selectedUsersContainer = document.getElementById("selected-users");
+
+            let selectedUsers = [];
+
+            input.addEventListener("input", () => {
+                const query = input.value.toLowerCase();
+                suggestionsBox.innerHTML = ""; // Clear previous suggestions
+                if (query) {
+                    const filteredUsers = users.filter(user => 
+                        user.toLowerCase().includes(query) && !selectedUsers.includes(user)
+                    );
+                    filteredUsers.forEach(user => {
+                        const suggestionDiv = document.createElement("div");
+                        suggestionDiv.textContent = user;
+                        suggestionDiv.addEventListener("click", () => {
+                            addSelectedUser(user);
+                            input.value = "";  // Clear input after selection
+                            suggestionsBox.innerHTML = "";  // Hide suggestions after selecting
+                        });
+                        suggestionsBox.appendChild(suggestionDiv);
+                    });
+                }
+            });
+
+            function addSelectedUser(user) {
+                if (!selectedUsers.includes(user)) {
+                    selectedUsers.push(user);
+                    const tag = document.createElement("div");
+                    tag.className = "tag";
+                    tag.innerHTML = `${user} <span>&times;</span>`;
+                    tag.querySelector("span").addEventListener("click", () => removeSelectedUser(user, tag));
+                    selectedUsersContainer.appendChild(tag);
+                }
+            }
+
+            function removeSelectedUser(user, tagElement) {
+                selectedUsers = selectedUsers.filter(selected => selected !== user);
+                selectedUsersContainer.removeChild(tagElement);
+            }
+
+            document.addEventListener("click", (e) => {
+                if (!e.target.closest(".multi-select-container")) {
+                    suggestionsBox.innerHTML = "";  // Hide suggestions if clicked outside
+                }
+            });
+        });
     </script>
 
 </body>
