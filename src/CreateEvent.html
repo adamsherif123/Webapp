@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="styles.css">
     <!--The above line links the stylesheet -->
     <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body class="create-event-page">
 
@@ -14,7 +17,7 @@
     <nav class="navbar">
         <!-- Creates a div navbar container class for the logo -->
         <div class="navbar__container">
-            <a href="/" class="navbar__logo"><h1>MOVES</h1></a>
+            <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
             <!--The above line creates the logo with a navigation of / (nothing) -->
             <div class="navbar__toggle" id="mobile-menu"> 
                 <span class="bar"></span>
@@ -52,79 +55,103 @@
     </nav>
 
     <div class="container">
-        <div class="form-section">
-            <h2>Enter event details</h2>
-            <form id="event-form">
-                <label for="event-name">Event name*</label>
-                <input type="text" id="event-name" name="event-name" placeholder="Enter event name..." required>
+        <div class="form-container">
+            <div class="form-section">
+                <h2>Enter event details</h2>
+                <form id="event-form">
+                    <label for="event-name">Event name*</label>
+                    <input type="text" id="event-name" name="event-name" placeholder="Enter event name..." required>
 
-                <label for="start-time">Start time*</label>
-                <input type="datetime-local" id="start-time" name="start-time" required>
+                    <label for="start-time">Start time*</label>
+                    <input type="datetime-local" id="start-time" name="start-time" required>
+                    
+                    <label for="end-time">End time*</label>
+                    <input type="datetime-local" id="end-time" name="end-time" required>
+
+                    <label for="venue-name">Venue name (optional)</label>
+                    <input type="text" id="venue-name" name="venue-name" placeholder="Enter venue name...">
+                    
+                    <label for="address">Location*</label>
+                    <input type="text" id="search-input" name="search-input" placeholder="Enter address..." required>
+
+                    <label for="event-type">Event type*</label>
+                    <select class="dropdown" id="event-type" name="event-type" required>
+                        <option value="">Choose an option</option>
+                        <option value="Festival">Festival</option>
+                        <option value="Party">Party</option>
+                        <option value="Birthday">Birthday</option>
+                        <option value="College Greek Life Party">Frat/Sorority party</option>
+                        <option value="Concert">Concert</option>
+                        <option value="Cruise">Cruise</option>
+                        <option value="Comedy">Comedy show</option>
+                        <option value="Art">Art</option>
+                        <option value="Gala">Gala</option>
+                        <option value="Music Festival">Music festival</option>
+                        <option value="Other">Other (please specify)</option>
+                    </select>
+                    <div id="other-event-type-container" style="display: none; margin-top: 10px;">
+                        <label for="other-event-type">Please specify event type:</label>
+                        <input type="text" id="other-event-type" name="other-event-type" placeholder="Enter your event type..." />
+                    </div>
+
+                    <label for="invite-type">Who can see the event?*</label>
+                    <select class="dropdown" id="invite-type" name="invite-type" required>
+                        <option value="">Choose an option</option>
+                        <option value="public">Everyone on the Moves App!</option>
+                        <option value="followers">Followers only</option>    
+                        <option value="invites">Invites only</option>
+                    </select>
+                    <!-- Hidden container for selecting invitees -->
+                    <div id="invitees-container" style="display: none; margin-top: 10px;">
+                        <label for="invitees-select">Invite users:</label>
+                        <select id="invitees-select" name="invitees[]" multiple="multiple" style="width: 100%;">
+                        <!-- If you want to load options dynamically, you can skip listing them here. -->
+                        <option value="user1">Jad Alami</option>
+                        <option value="user2">Emile Al-Billeh</option>
+                        <option value="user1">Balint Kidd</option>
+                        <option value="user2">Adam Sherif</option>
+                        <option value="user1">Lionel Messi</option>
+                        <option value="user2">Cristiano Ronaldo</option>
+                        <option value="user2">John Cena</option>
+                        <option value="user1">Randy Orton</option>
+                        <option value="user2">Tyson Fury</option>
+                        <option value="user1">Minouche Shafik</option>
+                        <option value="user2">Donald Trump</option>
+                        </select>
+                    </div>
+
+                    <label for="ticketing">Do you want to sell tickets?*</label>
+                    <select class="dropdown" id="ticketing" name="ticketing" required>
+                        <option value="">Choose an option</option>
+                        <option value="No">No</option>
+                        <option value="Yes">Yes</option>
+                    </select>
+                    <div id="ticket-price-container" style="display: none; margin-top: 10px;">
+                        <label for="ticket-price">Ticket price (USD)*:</label>
+                        <input type="number" id="ticket-price" name="ticket-price" placeholder="Enter ticket price (USD)..." />
+
+                        <label for="capacity">How many tickets do you want to sell? (optional):</label>
+                        <input type="number" id="capacity" name="capacity" placeholder="Enter maximum capacity..." />
+                    </div>
+
+                    <label for="event=description">Event description (optional) </label>
+                    <textarea id="event-description" placeholder="Tell people about your event..."></textarea>
+
+                    <label for="event-photo">Photo (optional):</label>
+                    <input type="file" id="event-photo" accept="image/*"/>
+        
+                    <button type="submit" class="btn">Create Event</button>
+                </form>
                 
-                <label for="end-time">End time*</label>
-                <input type="datetime-local" id="end-time" name="end-time" required>
-
-                <label for="venue-name">Venue name (optional)</label>
-                <input type="text" id="venue-name" name="venue-name" placeholder="Enter venue name...">
                 
-                <label for="address">Location*</label>
-                <input type="text" id="search-input" name="search-input" placeholder="Enter address..." required>
-
-                <label for="event-type">Event type*</label>
-                <select class="dropdown" id="event-type" name="event-type" required>
-                    <option value="">Choose an option</option>
-                    <option value="Festival">Festival</option>
-                    <option value="Party">Party</option>
-                    <option value="Birthday">Birthday</option>
-                    <option value="College Greek Life Party">Frat/Sorority party</option>
-                    <option value="Concert">Concert</option>
-                    <option value="Cruise">Cruise</option>
-                    <option value="Comedy">Comedy show</option>
-                    <option value="Art">Art</option>
-                    <option value="Gala">Gala</option>
-                    <option value="Music Festival">Music festival</option>
-                    <option value="Other">Other (please specify)</option>
-                </select>
-                <div id="other-event-type-container" style="display: none; margin-top: 10px;">
-                    <label for="other-event-type">Please specify event type:</label>
-                    <input type="text" id="other-event-type" name="other-event-type" placeholder="Enter your event type..." />
-                </div>
-
-                <label for="invite-type">Who can see the event?*</label>
-                <select class="dropdown" id="invite-type" name="invite-type" required>
-                    <option value="">Choose an option</option>
-                    <option value="public">Everyone on the Moves App!</option>
-                    <option value="followers">Followers only</option>    
-                </select>
-
-                <label for="ticketing">Do you want to sell tickets?*</label>
-                <select class="dropdown" id="ticketing" name="ticketing" required>
-                    <option value="">Choose an option</option>
-                    <option value="No">No</option>
-                    <option value="Yes">Yes</option>
-                </select>
-                <div id="ticket-price-container" style="display: none; margin-top: 10px;">
-                    <label for="ticket-price">Ticket price (USD):</label>
-                    <input type="number" id="ticket-price" name="ticket-price" placeholder="Enter ticket price (USD)..." />
-                </div>
-
-                <label for="event=description">Event description (optional) </label>
-                <textarea id="event-description" placeholder="Tell people about your event..."></textarea>
-
-                <label for="event-photo">Photo (optional):</label>
-                <input type="file" id="event-photo" accept="image/*"/>
-    
-                <button type="submit" class="btn">Create Event</button>
-            </form>
-            
-            
-        </div>
-        <div class="image-section">
-            <img id="party-image" src="Images/gpt-party.webp" alt="Party Image">
-            <button class="change-image-btn">
-                <img src="Images/GalleryIcon.png" alt="Change Image">
-            </button>
-            <input type="file" id="image-upload" accept="image/*">
+            </div>
+            <div class="image-section">
+                <img id="party-image" src="Images/gpt-party.webp" alt="Party Image">
+                <button class="change-image-btn">
+                    <img src="Images/GalleryIcon.png" alt="Change Image">
+                </button>
+                <input type="file" id="image-upload" accept="image/*">
+            </div>
         </div>
     </div>
 
@@ -179,11 +206,36 @@
             });
         });
 
+        // If invites only
+        document.addEventListener('DOMContentLoaded', () => {
+            const inviteTypeSelect = document.getElementById('invite-type');
+            const inviteesContainer = document.getElementById('invitees-container');
+            const inviteesSelect = document.getElementById('invitees-select');
+
+            inviteTypeSelect.addEventListener('change', function() {
+                if (this.value === 'invites') {
+                    inviteesContainer.style.display = 'block';
+                } else {
+                    inviteesContainer.style.display = 'none';
+                    inviteesSelect.selectedIndex = -1; // Clear selection if you want to reset
+                }
+            });
+        });
+
+        $(document).ready(function() {
+            $('#invitees-select').select2({
+                placeholder: "Search and invite users",
+                allowClear: true
+                // or configure AJAX if you want remote searching
+            });
+        });
+
         // If selling tickets, ask for price
         document.addEventListener('DOMContentLoaded', () => {
             const ticketingSelect = document.getElementById('ticketing');
             const ticketPriceContainer = document.getElementById('ticket-price-container');
             const ticketPriceInput = document.getElementById('ticket-price');
+            
 
             ticketingSelect.addEventListener('change', function () {
                 if (this.value === "Yes") {

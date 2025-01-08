@@ -33,7 +33,7 @@ body {
    justify-content: center;
    align-items: center;
    font-size: 1.2rem;
-   position: fixed;
+   position: sticky;
    top: 0;
    z-index: 999;
 }
@@ -333,12 +333,7 @@ body {
    flex-wrap: wrap;
    justify-content: center;
    align-items: flex-start;
-   background: linear-gradient(
-      135deg,
-      var(--main-bg-color),
-      var(--primary-color) 40%,
-      var(--secondary-color) 80%
-  );
+   background: var(--main-bg-color);
    padding: 70px;
 }
 
@@ -643,6 +638,42 @@ body {
 .suggestions-box div:hover {
    background-color: var(--input-bg-color);
 }
+
+/* About us page */
+.about-container {
+   width: 90%;          /* Take up most of the page width */
+   max-width: 1200px;   /* Optional: limit max width for large screens */
+   margin: 0 auto;      /* Center the container horizontally */
+   padding: 20px 0;     /* Some spacing above/below if desired */
+ }
+ 
+.moves-info {
+   border: 8px solid var(--primary-color);
+   border-radius: 10px;
+   padding: 20px;
+   display: flex;
+   flex-direction: row; /* Paragraph on the left, image on the right */
+   align-items: center; /* Vertically center content if desired */
+   background-color: white;
+   margin-bottom: 20px;     /* Space between the two boxes */
+}
+
+.text-section {
+   flex: 2; /* or 2, if you want text to be bigger portion */
+   margin-right: 20px; /* space between text & image */
+ }
+ 
+ .illustration-section {
+   flex: 1; /* or a smaller number if you want a smaller image */
+   display: flex;
+   justify-content: center; /* center the image horizontally in its half */
+   align-items: center;
+   max-height: 500px;
+ }
+ 
+ .illustration-section img {
+   max-height: 500px;
+ }
 
 
  

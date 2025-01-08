@@ -337,6 +337,14 @@ body {
    padding: 70px;
 }
 
+.create-event-page .form-container {
+   border: 10px solid var(--primary-color);
+   border-radius: 20px;
+   display: flex;
+   flex-direction: row;
+   background-color: white;
+}
+
 .form-section,
 .image-section {
    flex: 1;
@@ -376,6 +384,37 @@ body {
    font-size: 16px;    /* ensure a consistent size across fields */
 }
 
+/* Target the multiple select default look */
+.select2-container--default .select2-selection--multiple {
+   background-color: var(--input-bg-color) !important; /* or your desired color */
+   border: none !important;
+   border-radius: 10px !important;
+   color: var(--text-color) !important;
+   font-family: var(--font-family) !important;
+   font-size: 16px !important;
+   min-height: 50px; /* match other inputs' height if needed */
+   box-shadow: none !important;
+   /* etc. */
+ }
+ 
+ /* Remove default border and box-shadow on focus */
+ .select2-container--default .select2-selection--multiple:focus,
+ .select2-container--default .select2-selection--multiple:hover {
+   border: none !important;
+   box-shadow: none !important;
+ }
+ 
+ /* Adjust the tags (selected items) inside the multiple select */
+ .select2-container--default .select2-selection__choice {
+   background-color: var(--primary-color) !important;
+   border: none !important;
+   color: white !important;
+   border-radius: 15px !important;
+   margin: 2px !important;
+   padding: 3px 10px !important;
+   font-size: 14px !important;
+ }
+
 .form-section input::placeholder, 
 .form-section textarea::placeholder {
    color: var(--placeholder-color);
@@ -397,6 +436,19 @@ body {
 .form-section button:hover {
    background: var(--primary-color-dark);
 }
+
+#invitees-container {
+   margin-top: 10px;
+ }
+ 
+ #invitees-select {
+   width: 100%;
+   padding: 10px;
+   border-radius: 5px;
+   background-color: var(--input-bg-color);
+   color: var(--text-color);
+   border: none;
+ }
 
 .image-section {
    position: relative;
@@ -674,6 +726,51 @@ body {
  .illustration-section img {
    max-height: 500px;
  }
+
+ /* Dashboard */
+ .dashboard-container {
+   width: 90%;          /* Take up most of the page width */
+   max-width: 1200px;   /* Optional: limit max width for large screens */
+   margin: 0 auto;      /* Center the container horizontally */
+   padding: 20px 0;  
+   display: flex;  
+   flex-direction: column;
+ }
+
+ .data-summary {
+   border: 8px solid var(--primary-color);
+   border-radius: 10px;
+   padding: 20px;
+   display: flex;
+   flex-direction: row; /* Paragraph on the left, image on the right */
+   align-items: center; /* Vertically center content if desired */
+   background-color: white;
+   margin-bottom: 20px;     /* Space between the two boxes */
+}
+
+.title-and-links {
+   display: flex;
+   flex-direction: row;
+   padding-bottom: 5px;
+   
+}
+
+.title-and-links h1 {
+   padding-right: 20px;
+   background-image: linear-gradient(to top, #9808ff 0%, #c299ff 100%);
+   background-size: 100%;
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+}
+
+.links-container {
+   display: flex;
+   flex-direction: column;
+}
+
+#see-all-events {
+   margin-top: 12px;
+}
 
 
  
