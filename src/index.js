@@ -35,7 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     approved: false
                 });
 
-                alert('Signup successful. You can log in as soon as we approve your account!');
+                alert('Signup successful. You can log in as soon as we approve your account! (this should take less than 24 hours)');
+                window.location.href = './';
             } catch (error) {
                 console.error('Signup error:', error.code, error.message);
                 alert(`Error: ${error.message}`);

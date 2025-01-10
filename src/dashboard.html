@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
     <!--The above line links the stylesheet -->
     <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
 </head>
 <body>
 
@@ -17,7 +18,7 @@
             <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
             <!--The above line creates the logo with a navigation of / (nothing) -->
             <div class="navbar__toggle" id="mobile-menu"> 
-            <!-- Three lines menu-->
+                <!-- Three lines menu-->
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -44,10 +45,17 @@
                         Contact Us
                     </a>
                 </li>
-                <li class="navbar__btn">
-                    <a href="./" class="button">
-                        Log Out
-                    </a>
+                <li class="navbar__user">
+                    <div class="user-dropdown">
+                        <span class="username">
+                            myusername
+                            <i class='bx bxs-user-circle'></i>
+                        </span>
+                        <div class="dropdown-content">
+                            <a href="./account-settings.html">Account Settings</a>
+                            <a href="./">Log Out</a>
+                        </div>
+                    </div>
                 </li>
             </ul>
         </div>
