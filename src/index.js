@@ -210,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const userData = docSnap.data();
             const welcomeTitle = document.getElementById('welcome-title');
     
-            welcomeTitle.textContent = `Welcome, ${userData.organizationName || 'User'}`;
+            welcomeTitle.textContent = `Welcome, ${userData.organizationName || 'User'}!`;
           } else {
             console.error('No such document!');
           }
