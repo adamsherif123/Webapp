@@ -8,13 +8,12 @@ if (menu && menuLinks) {
     });
 }
 
-// styles
 import './styles.css';
 
-// Import Firebase auth and Firestore from the initialization file
+
 import { auth, db } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from "firebase/auth";
-import { setDoc, getDoc, doc } from "firebase/firestore";
+import { setDoc, getDoc, doc, addDoc, collection } from "firebase/firestore";
 
 // Handle signup
 document.addEventListener('DOMContentLoaded', () => {
@@ -22,17 +21,43 @@ document.addEventListener('DOMContentLoaded', () => {
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const email = document.getElementById('signup-email').value;
             const password = document.getElementById('signup-password').value;
+            const organizationName = document.getElementById('organization-name').value;
+            const organizationType = document.getElementById('organization-type').value;
+            const otherOrganizationType = document.getElementById('other-organization-type').value;
+
+            const phoneNumber = document.getElementById('organization-phone').value || null;
+            const description = document.getElementById('organization-description').value || null;
+            const location = document.getElementById('organization-location').value || null;
+
+            const photoInput = document.getElementById('organization-photo');
+            let photoURL = null;
+
+            const selectedUsers = Array.from(document.querySelectorAll('#selected-users .tag')).map(tag => tag.textContent.trim());
 
             try {
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 const user = userCredential.user;
 
-                // Add user to pending collection for admin approval
+                if (photoInput.files[0]) {
+                    const storageRef = firebase.storage().ref(); // Replace with your Firebase storage ref
+                    const fileRef = storageRef.child(`organization_photos/${user.uid}`);
+                    await fileRef.put(photoInput.files[0]);
+                    photoURL = await fileRef.getDownloadURL();
+                }
+
                 await setDoc(doc(db, "users", user.uid), {
                     email: user.email,
-                    approved: false
+                    phoneNumber: phoneNumber,
+                    organizationName: organizationName,
+                    organizationType: organizationType === "Other" ? otherOrganizationType : organizationType,
+                    description: description,
+                    location: location,
+                    linkedAccounts: selectedUsers,
+                    photoURL: photoURL,
+                    approved: false, // Default approval status
                 });
 
                 alert('Signup successful. You can log in as soon as we approve your account! (this should take less than 24 hours)');
@@ -101,5 +126,99 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     } 
+
+    const eventForm = document.getElementById('event-form');
+    if (eventForm) {
+        eventForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent default form submission
+
+            // Mandatory fields
+            const eventName = document.getElementById('event-name').value;
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+            const location = document.getElementById('search-input').value;
+            const eventType = document.getElementById('event-type').value;
+
+            // Handle "Other" event type
+            const otherEventTypeInput = document.getElementById('other-event-type');
+            const finalEventType = eventType === 'Other' ? otherEventTypeInput.value : eventType;
+
+            // Optional fields
+            const venueName = document.getElementById('venue-name').value || null;
+            const inviteType = document.getElementById('invite-type').value || null;
+
+            // Handle invitees if "Invites Only" is selected
+            let invitees = [];
+            if (inviteType === 'invites') {
+                const inviteesSelect = document.getElementById('invitees-select');
+                invitees = Array.from(inviteesSelect.selectedOptions).map(option => option.value);
+            }
+
+            const ticketing = document.getElementById('ticketing').value;
+            const ticketPrice =
+                ticketing === 'Yes'
+                    ? document.getElementById('ticket-price').value || null
+                    : null;
+            const capacity =
+                ticketing === 'Yes'
+                    ? document.getElementById('capacity').value || null
+                    : null;
+
+            const eventDescription = document.getElementById('event-description').value || null;
+
+            try {
+                // Build event object WITHOUT image
+                const eventData = {
+                    eventName,
+                    startTime,
+                    endTime,
+                    location,
+                    eventType: finalEventType,
+                    venueName,
+                    inviteType,
+                    invitees,
+                    ticketing,
+                    ticketPrice,
+                    capacity,
+                    eventDescription,
+                    createdAt: new Date().toISOString(), // Add timestamp
+                };
+
+                // Save to Firestore
+                await addDoc(collection(db, 'events'), eventData);
+
+                alert('Event created successfully!');
+                eventForm.reset(); // Reset the form
+            } catch (error) {
+                console.error('Error creating event:', error);
+                alert(`Error: ${error.message}`);
+            }
+        });
+    }
+
+    auth.onAuthStateChanged(async (user) => {
+        if (!user) {
+          window.location.href = '/login.html';
+          return;
+        }
     
+        try {
+          const userRef = doc(db, 'users', user.uid);
+          const docSnap = await getDoc(userRef);
+    
+          if (docSnap.exists()) {
+            const userData = docSnap.data();
+            const welcomeTitle = document.getElementById('welcome-title');
+    
+            welcomeTitle.textContent = `Welcome, ${userData.organizationName || 'User'}`;
+          } else {
+            console.error('No such document!');
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+    });
+
+
 });
+
