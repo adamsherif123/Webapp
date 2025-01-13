@@ -44,7 +44,6 @@ body {
    align-items: center;
    height: 80px;
    width: 100%;
-   max-width: 1300px;
    margin: 0 auto;
 }
 
@@ -59,6 +58,7 @@ body {
    text-decoration: none;
    font-size: 2rem;
    font-weight: 500;
+   padding-left: 30px;
 }
 
 .navbar__menu {
@@ -66,6 +66,7 @@ body {
    align-items: center;
    list-style: none;
    text-align: center;
+   margin-left: auto;
 }
 
 .navbar__item {
@@ -345,6 +346,17 @@ body {
    background-color: white;
 }
 
+.create-event-btn {
+   font-size: 1.2rem;       /* Larger text */
+   padding: 15px 30px;      /* Bigger padding */
+   border-radius: 8px;      /* Slightly more rounded corners */
+   transition: transform 0.2s ease;
+}
+ 
+.create-event-btn:hover {
+   transform: scale(1.02);
+}
+
 .form-section,
 .image-section {
    flex: 1;
@@ -484,6 +496,149 @@ body {
 #image-upload {
    display: none;
 }
+
+.form-intro {
+   font-size: 1rem;
+   color: var(--text-color);
+   margin-bottom: 15px;
+ }
+ 
+ .time-inputs {
+   display: flex;
+   gap: 10px;
+   margin-bottom: 15px;
+ }
+
+ /* Confirmation Overlay & Modal */
+.confirm-overlay {
+   display: none; /* Hidden by default */
+   position: fixed;
+   top: 0; 
+   left: 0;
+   width: 100vw; 
+   height: 100vh;
+   background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black overlay */
+   justify-content: center; 
+   align-items: center;
+   z-index: 9999;
+ }
+ 
+ .confirm-modal {
+   background-color: var(--white-color);
+   border: 4px solid var(--primary-color);
+   border-radius: 10px;
+   width: 300px;
+   max-width: 90%;
+   padding: 20px 25px;
+   text-align: center;
+   box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+ }
+ 
+ .confirm-modal h2 {
+   color: var(--primary-color-dark);
+   font-size: 1.5rem;
+   margin-bottom: 10px;
+ }
+ 
+ .confirm-modal p {
+   color: var(--text-color);
+   margin-bottom: 20px;
+ }
+ 
+ .modal-buttons {
+   display: flex;
+   justify-content: space-around;
+   gap: 10px;
+ }
+ 
+ .modal-confirm-btn, .modal-cancel-btn {
+   font-size: 1rem;
+   padding: 10px 20px;
+   border-radius: 5px;
+   cursor: pointer;
+ }
+ 
+ /* Example styling for the Yes/No buttons */
+ .modal-confirm-btn {
+   background-color: var(--primary-color);
+   color: var(--white-color);
+   border: none;
+   transition: background 0.2s ease;
+ }
+ .modal-confirm-btn:hover {
+   background-color: var(--primary-color-dark);
+ }
+ 
+ .modal-cancel-btn {
+   background-color: #ccc;
+   color: #000;
+   border: none;
+   transition: background 0.2s ease;
+ }
+ .modal-cancel-btn:hover {
+   background-color: #bbb;
+ }
+ 
+ /* Make the "Create Event" button bigger and more distinct */
+ .create-event-btn {
+   font-size: 1.2rem;       /* Larger text */
+   padding: 15px 30px;      /* Bigger padding */
+   border-radius: 8px;      /* Slightly more rounded corners */
+   margin-top: 25px;
+   transition: transform 0.2s ease;
+ }
+ .create-event-btn:hover {
+   transform: scale(1.02);
+ }
+ 
+ .gradient-placeholder {
+   width: 100%;
+   min-height: 300px; 
+   border-radius: 10px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   text-align: center;
+   padding: 10px;
+   cursor: pointer;
+   /* The gradient background from your request */
+   background: linear-gradient(
+     135deg,
+     var(--main-bg-color),
+     var(--primary-color) 40%,
+     var(--secondary-color) 80%
+   );
+   color: #fff; /* White text */
+   font-size: 5rem;
+   font-style: italic;
+ }
+ .gradient-placeholder span {
+   margin: 0 10px;
+ }
+ 
+ /* The preview box for the uploaded image */
+ .image-preview {
+   margin-top: 15px;
+   border: 2px dashed var(--placeholder-color);
+   border-radius: 10px;
+   padding: 10px;
+   text-align: center;
+   min-height: 160px;
+ }
+ 
+ .image-preview img {
+   max-width: 100%;
+   border-radius: 8px;
+ }
+ .image-preview p {
+   font-size: 0.9rem;
+   color: var(--placeholder-color);
+   margin: 0;
+ }
+ 
+ /* The rest of your existing styles remain unchanged... */
+ 
+ 
 
 /* Login & Sign Up Page */
 
@@ -772,6 +927,218 @@ body {
    margin-top: 12px;
 }
 
+/* Align the user dropdown to the right */
+.navbar__user {
+   margin-left: auto;  /* Push to the right */
+   position: relative;
+}
+
+.navbar__user span {
+   display: flex;
+   flex-direction: row;
+}
+
+.navbar__user span i{
+   padding-left: 5px;
+   margin: auto;
+   font-size: 1.5rem;
+}
+
+.user-dropdown {
+   cursor: pointer;
+   position: relative;
+}
+
+.username {
+   padding: 10px 20px;
+   /* background-color: var(--primary-color); */
+   color: var(--primary-color);
+   border-radius: 5px;
+}
+
+.dropdown-content {
+   display: none;  /* Hidden by default */
+   position: absolute;
+   right: 0;
+   background-color: white;
+   min-width: 160px;
+   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+   z-index: 1;
+   border-radius: 8px;
+}
+
+.dropdown-content a {
+   color: var(--text-color);
+   padding: 12px 16px;
+   text-decoration: none;
+   display: block;
+   border-bottom: 1px solid #f3f3f3;
+}
+
+.dropdown-content a:hover {
+   background-color: var(--input-bg-color);
+}
+
+.user-dropdown:hover .dropdown-content {
+   display: block;  /* Show dropdown when hovering */
+}
+
+/* Dashboard Heading */
+.dashboard-heading {
+   text-align: center;
+   font-size: 2.5rem;
+   background-image: linear-gradient(to top, #9808ff 0%, #c299ff 100%);
+   -webkit-background-clip: text;
+   -webkit-text-fill-color: transparent;
+   margin-top: 20px;
+   margin-bottom: 30px;
+}
+
+/* Stats Containers */
+.stats-container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: space-around;
+   gap: 20px;
+   padding: 20px;
+}
+
+.extended-stats {
+   margin-top: -10px; /* Slight overlap look if desired */
+   border-top: 2px dotted var(--placeholder-color);
+   padding-top: 20px;
+}
+
+/* Statistic Cards */
+.stat-card {
+   background-color: white;
+   border: 4px solid var(--primary-color);
+   border-radius: 12px;
+   width: 280px;
+   padding: 20px;
+   text-align: center;
+   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+   transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+   transform: scale(1.03);
+}
+
+.stat-card h2 {
+   font-size: 1.3rem;
+   color: var(--primary-color-dark);
+   margin-bottom: 10px;
+}
+
+.stat-value {
+   font-size: 2rem;
+   font-weight: bold;
+   color: var(--secondary-color);
+}
+
+/* My Events Card Layout */
+.event-list {
+   margin-top: 10px;
+   margin-bottom: 30px;
+ }
+ 
+ .dynamic-event-card {
+   background-color: #fff;
+   border: 2px solid var(--primary-color);
+   border-radius: 10px;
+   margin-bottom: 15px;
+   padding: 15px;
+   box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+   transition: transform 0.2s ease;
+ }
+ 
+ .dynamic-event-card:hover {
+   transform: scale(1.01);
+ }
+ 
+ .dynamic-event-card h3 {
+   font-size: 1.3rem;
+   color: var(--primary-color-dark);
+   margin-bottom: 8px;
+ }
+ 
+ .dynamic-event-card p {
+   margin: 4px 0;
+   color: var(--text-color);
+   font-size: 1rem;
+ }
+ 
+ .dynamic-event-card h4 {
+   margin-top: 10px;
+   margin-bottom: 5px;
+   font-size: 1.1rem;
+   color: var(--primary-color);
+ }
+ 
+ .dynamic-event-card .event-type {
+   font-weight: normal;
+   font-size: 1rem;
+   color: var(--secondary-color);
+ }
+ 
+ /* Additional styling for quick links on dashboard */
+ .dashboard-links-container {
+   display: flex;
+   flex-wrap: wrap;
+   justify-content: center;
+   gap: 20px;
+   padding: 20px;
+ }
+ 
+ .quick-link-card {
+   background-color: white;
+   border: 2px solid var(--primary-color);
+   border-radius: 12px;
+   width: 280px;
+   padding: 20px;
+   text-align: center;
+   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .quick-link-card h3 {
+   color: var(--primary-color-dark);
+   margin-bottom: 10px;
+ }
+ 
+ .quick-link-card p {
+   color: var(--text-color);
+   margin-bottom: 15px;
+ }
+ 
+ /* Adjust these for comfortable spacing */
+.main.dashboard-section {
+   padding: 40px 30px; /* bigger padding around main content */
+ }
+ 
+ .stat-card {
+   padding: 20px 25px; /* more internal padding */
+   margin: 0 10px 20px 10px; /* spacing around the card */
+ }
+ 
+ .dynamic-event-card {
+   padding: 20px; /* increased from 15 to 20 */
+   margin: 15px;  /* ensure it's away from edges */
+ }
+ 
+ .events-overview-container, .event-preview, .event-list {
+   padding: 20px; 
+   margin: 0 auto; 
+ }
+ 
+ .quick-link-card {
+   padding: 20px 25px; 
+   margin-bottom: 20px;
+ }
+ 
+
+
+
 
  
 
@@ -856,7 +1223,7 @@ body {
        flex-direction: column;
        padding: 20px;
    }
-
+    
    .footer__link--items {
        width: 100%;
        margin: 10px 0;
@@ -897,6 +1264,78 @@ body {
    }
 }
 
+/* Wizard-Specific Classes */
+
+/* The container that holds wizard steps & the progress bar */
+.wizard-container {
+   display: flex;
+   flex-direction: column;
+   width: 100%;
+ }
+ 
+ /* The horizontal step indicators at the top */
+ .wizard-steps {
+   display: flex;
+   justify-content: space-around;
+   align-items: center;
+   margin-bottom: 20px;
+ }
+ 
+ .wizard-step-indicator {
+   flex: 1;
+   text-align: center;
+   padding: 10px 0;
+   background-color: var(--input-bg-color);
+   border-right: 1px solid var(--white-color);
+   font-weight: bold;
+   cursor: pointer;
+   color: var(--black-color);
+   transition: background 0.3s ease;
+ }
+ 
+ .wizard-step-indicator:last-child {
+   border-right: none;
+ }
+ 
+ .wizard-step-indicator.active {
+   background-color: var(--primary-color);
+   color: var(--white-color);
+ }
+ 
+ /* Each step container */
+ .wizard-step {
+   display: none; /* hidden by default, "active" step is shown */
+   width: 100%;
+   flex-direction: row; /* aligns with your .form-section, .image-section layout */
+ }
+ 
+ /* Show the .wizard-step when active is added via JS */
+ .wizard-step.active {
+   display: flex;
+ }
+ 
+ /* summary-line just for final summary styling */
+ .summary-line {
+   margin: 5px 0;
+   font-size: 1rem;
+ }
+ 
+ /* Buttons for the step nav if needed 
+    (you can also rely on the step indicators or custom logic):
+ */
+ .wizard-nav-buttons {
+   margin-top: 20px;
+   display: flex;
+   justify-content: space-between;
+ }
+ 
+ .wizard-nav-buttons .btn {
+   width: auto;
+   min-width: 100px;
+   margin: 0 5px;
+ }
+ 
+
 @media screen and (max-width: 430px){
    .main__content h1,
    .main__content h2{
@@ -910,4 +1349,3 @@ body {
       height: 325px;
    }
 }
-

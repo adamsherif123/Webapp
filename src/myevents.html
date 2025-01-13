@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>MOVES - My Events</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navbar Section -->
+  <nav class="navbar">
+    <div class="navbar__container">
+      <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+      <div class="navbar__toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+      <ul class="navbar__menu">
+        <li class="navbar__btn"><a href="./about-logged-in.html" class="button">About Us</a></li>
+        <li class="navbar__btn"><a href="createevent.html" class="button">Create Event</a></li>
+        <li class="navbar__btn"><a href="#" class="button">My Events</a></li>
+        <li class="navbar__btn"><a href="./contact.html" class="button">Contact Us</a></li>
+        <li class="navbar__user">
+          <div class="user-dropdown">
+            <span class="username">
+              myusername
+              <i class='bx bxs-user-circle'></i>
+            </span>
+            <div class="dropdown-content">
+              <a href="./account-settings.html">Account Settings</a>
+              <a href="./">Log Out</a>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- My Events Section -->
+  <div class="main dashboard-section">
+    <h1 class="dashboard-heading">My Events</h1>
+
+    <!-- Current Events -->
+    <h2>Current Events (Live)</h2>
+    <div class="event-list" id="current-events"></div>
+
+    <!-- Upcoming Events -->
+    <h2>Upcoming Events</h2>
+    <div class="event-list" id="upcoming-events"></div>
+
+    <!-- Past Events -->
+    <h2>Past Events</h2>
+    <div class="event-list" id="past-events"></div>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="footer__container">
+    <p>
+      We are constantly working to improve our product. 
+      For feedback/questions, reach us at moves@email.com
+    </p>
+  </div>
+
+  <script>
+    // Example data for My Events
+    const myCurrentEvents = [
+      {
+        name: "Late Summer Bash",
+        startTime: "2023-08-25 18:00",
+        endTime: "2023-08-25 23:00",
+        venue: "Rooftop Lounge",
+        address: "456 Skyline Dr",
+        eventType: "Party",
+        isTicketed: true,
+        totalRevenue: 1200,
+        totalRSVP: 75,
+        genderRSVP: { malePct: 66.7, femalePct: 33.3 },
+        currentlyAtEvent: 45,
+        genderAtEvent: { malePct: 60, femalePct: 40 }
+      }
+    ];
+
+    const myUpcomingEvents = [
+      {
+        name: "Campus Kickoff",
+        startTime: "2023-09-01 20:00",
+        endTime: "2023-09-02 02:00",
+        venue: "Alpha Beta House",
+        address: "University District",
+        eventType: "College Greek Life Party",
+        isTicketed: true,
+        totalRevenue: 0, // so far
+        totalRSVP: 40,
+        genderRSVP: { malePct: 50, femalePct: 50 },
+      }
+    ];
+
+    const myPastEvents = [
+      {
+        name: "Art Expo 2023",
+        startTime: "2023-07-10 10:00",
+        endTime: "2023-07-10 15:00",
+        venue: "City Art Museum",
+        address: "789 Museum Rd",
+        eventType: "Art",
+        isTicketed: false,
+        totalRevenue: 0,
+        totalRSVP: 100,
+        genderRSVP: { malePct: 60, femalePct: 40 },
+      },
+      {
+        name: "Fraternity Cookout",
+        startTime: "2023-07-01 12:00",
+        endTime: "2023-07-01 18:00",
+        venue: "Beta House Lawn",
+        address: "University District",
+        eventType: "College Greek Life Party",
+        isTicketed: true,
+        totalRevenue: 500,
+        totalRSVP: 50,
+        genderRSVP: { malePct: 60, femalePct: 40 },
+      }
+    ];
+
+    // Create event card
+    function createEventCard(event, category) {
+      const card = document.createElement("div");
+      card.className = "dynamic-event-card";
+
+      let content = `
+        <h3>${event.name} - <span class="event-type">${event.eventType}</span></h3>
+        <p><strong>Start:</strong> ${event.startTime}</p>
+        <p><strong>End:</strong> ${event.endTime}</p>
+        <p><strong>Venue:</strong> ${event.venue}</p>
+        <p><strong>Address:</strong> ${event.address}</p>
+        <p><strong>Ticketed:</strong> ${event.isTicketed ? "Yes" : "No"}</p>
+        <p><strong>Total Revenue:</strong> $${event.totalRevenue}</p>
+        <p><strong>Total RSVPs:</strong> ${event.totalRSVP}</p>
+        <p><strong>Gender (RSVPs):</strong> M: ${event.genderRSVP.malePct}%, F: ${event.genderRSVP.femalePct}%</p>
+      `;
+
+      if (category === "current") {
+        content += `
+          <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent}</p>
+          <p><strong>Gender (At Event):</strong> 
+             M: ${event.genderAtEvent.malePct}%, 
+             F: ${event.genderAtEvent.femalePct}%
+          </p>
+        `;
+      } else if (category === "upcoming") {
+        content += `
+        <a href="edit-event.html" class="hyperlink">Edit Event</a>
+        `;
+      }
+
+      card.innerHTML = content;
+      return card;
+    }
+
+    function populateMyEvents() {
+      const currentList  = document.getElementById('current-events');
+      const upcomingList = document.getElementById('upcoming-events');
+      const pastList     = document.getElementById('past-events');
+
+      // Current
+      if (myCurrentEvents.length === 0) {
+        currentList.innerHTML = `<p>No current (live) events right now.</p>`;
+      } else {
+        myCurrentEvents.forEach(evt => {
+          currentList.appendChild(createEventCard(evt, 'current'));
+        });
+      }
+
+      // Upcoming
+      if (myUpcomingEvents.length === 0) {
+        upcomingList.innerHTML = `<p>No upcoming events. 
+          <a href="createevent.html" class="hyperlink">Create an event</a></p>`;
+      } else {
+        myUpcomingEvents.forEach(evt => {
+          upcomingList.appendChild(createEventCard(evt, 'upcoming'));
+        });
+      }
+
+      // Past
+      if (myPastEvents.length === 0) {
+        pastList.innerHTML = `<p>No past events found.</p>`;
+      } else {
+        myPastEvents.forEach(evt => {
+          pastList.appendChild(createEventCard(evt, 'past'));
+        });
+      }
+    }
+
+    populateMyEvents();
+  </script>
+</body>
+</html>

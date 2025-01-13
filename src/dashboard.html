@@ -1,111 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MOVES</title>
-    <link rel="stylesheet" href="styles.css">
-    <!--The above line links the stylesheet -->
-    <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>MOVES - Dashboard</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
 </head>
 <body>
 
-    <!-- The line below creates the top nav bar -->
-    <nav class="navbar">
-        <!-- Creates a div navbar container class for the logo -->
-        <div class="navbar__container">
-            <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
-            <!--The above line creates the logo with a navigation of / (nothing) -->
-            <div class="navbar__toggle" id="mobile-menu"> 
-                <!-- Three lines menu-->
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+  <!-- Navbar Section -->
+  <nav class="navbar">
+    <div class="navbar__container">
+      <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+      <div class="navbar__toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </div>
+      <ul class="navbar__menu">
+        <li class="navbar__btn"><a href="./about-logged-in.html" class="button">About Us</a></li>
+        <li class="navbar__btn"><a href="createevent.html" class="button">Create Event</a></li>
+        <li class="navbar__btn"><a href="myevents.html" class="button">My Events</a></li>
+        <li class="navbar__btn"><a href="./contact.html" class="button">Contact Us</a></li>
+        <li class="navbar__user">
+          <div class="user-dropdown">
+            <span class="username">
+              myusername
+              <i class='bx bxs-user-circle'></i>
+            </span>
+            <div class="dropdown-content">
+              <a href="./account-settings.html">Account Settings</a>
+              <a href="./">Log Out</a>
             </div>
-            
-            <ul class="navbar__menu">
-                <li class="navbar__btn">
-                    <a href="./about-logged-in.html" class="button">
-                        About Us
-                    </a>
-                </li>
-                <li class="navbar__btn">
-                    <a href="createevent.html" class="button">
-                        Create Event
-                    </a>
-                </li>
-                <li class="navbar__btn">
-                    <a href="./" class="button">
-                        My Events
-                    </a>
-                </li>
-                <li class="navbar__btn">
-                    <a href="./" class="button">
-                        Contact Us
-                    </a>
-                </li>
-                <li class="navbar__user">
-                    <div class="user-dropdown">
-                        <span class="username">
-                            myusername
-                            <i class='bx bxs-user-circle'></i>
-                        </span>
-                        <div class="dropdown-content">
-                            <a href="./account-settings.html">Account Settings</a>
-                            <a href="./">Log Out</a>
-                        </div>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
 
-    <!-- Testing comment -->
+  <!-- Main Dashboard Section -->
+  <div class="main dashboard-section">
+    <h1 class="dashboard-heading">Welcome, myusername!</h1>
 
-    <!-- Hero Section -->
-    <div class="main">
-        <div class="dashboard-container">
-            <div class="title-and-links">
-                <h1>Your Event is on the Map!</h1>
-
-                <div class="links-container">
-                    <a href="myevents.html" class="hyperlink">See more</a>
-                    <a href="edit-event.html" class="hyperlink">Edit Event</a>
-                </div>
-
-            </div>
-            <div class="data-summary">
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est fugit itaque sequi ut. Nulla, cupiditate est id enim quod nam, delectus excepturi, molestiae distinctio quia architecto obcaecati unde ullam ea?
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est, ipsa deleniti. Rem aut temporibus, eos in ullam fugit alias tenetur blanditiis illo sint voluptas assumenda nobis ex, perferendis mollitia ad?
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsum eveniet molestias ipsam suscipit deleniti nisi porro iusto accusamus corporis harum, ratione similique dolorem odio neque omnis delectus commodi veniam. Mollitia?
-                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eos at placeat repellat itaque consequatur tenetur laboriosam porro vel aut dolores qui, id natus suscipit quasi eaque omnis eligendi! Similique, eaque?
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis maiores dolore quidem placeat, eveniet veniam numquam? Perspiciatis, veniam dignissimos. Quas molestiae maiores nesciunt voluptatum! Ex pariatur vitae provident porro veniam.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est fugit itaque sequi ut. Nulla, cupiditate est id enim quod nam, delectus excepturi, molestiae distinctio quia architecto obcaecati unde ullam ea?
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est, ipsa deleniti. Rem aut temporibus, eos in ullam fugit alias tenetur blanditiis illo sint voluptas assumenda nobis ex, perferendis mollitia ad?
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsum eveniet molestias ipsam suscipit deleniti ni
-            </div>
-            <div class="title-and-links">
-                <h1>All my Events</h1>
-                <a href="myevents.html" class="hyperlink" id="see-all-events">See more</a>
-            </div>
-            <div class="data-summary">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ad iure totam est, odit deleniti cumque nihil illo doloremque tenetur magnam, molestiae veniam perferendis in numquam, amet facilis quibusdam et animi!
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Maxime optio accusamus maiores provident, quas architecto, nobis distinctio ducimus sequi, nisi cum facilis quae laborum minus libero nihil delectus qui mollitia.
-                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Beatae accusantium sit laboriosam enim, at eos tempore inventore? Dolorum, nihil in. Soluta non, repellendus tempora deserunt quod incidunt fuga iure cumque?
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita cumque molestias laudantium quaerat sapiente adipisci maxime, id molestiae dolores, nihil, nulla fuga ad in suscipit saepe tempore rem eveniet assumenda.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam iusto sunt non hic alias quo, deserunt facilis natus quam? Officiis, ducimus! Error quia, officiis facere nam animi in architecto odio.
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Est fugit itaque sequi ut. Nulla, cupiditate est id enim quod nam, delectus excepturi, molestiae distinctio quia architecto obcaecati unde ullam ea?
-                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Est, ipsa deleniti. Rem aut temporibus, eos in ullam fugit alias tenetur blanditiis illo sint voluptas assumenda nobis ex, perferendis mollitia ad?
-                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Ipsum eveniet molestias ipsam suscipit deleniti ni
-            </div>
-        </div>
+    <!-- High-Level Statistics Row -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <h2>Total Revenue</h2>
+        <p class="stat-value">$<span id="total-revenue">0</span></p>
+      </div>
+      <div class="stat-card">
+        <h2>Total Events</h2>
+        <p class="stat-value"><span id="total-events">0</span></p>
+      </div>
+      <div class="stat-card">
+        <h2>Total RSVPs</h2>
+        <p class="stat-value"><span id="total-rsvps">0</span></p>
+      </div>
+      <div class="stat-card">
+        <h2>Followers</h2>
+        <p class="stat-value"><span id="followers-count">0</span></p>
+      </div>
     </div>
 
-    <!-- Footer Section -->
-    <div class="footer__container">
-        <p>We are constantly working to improve our product. For feedback/questions, reach us at moves@email.com or +12908493190.</p>
+    <!-- Ongoing & Upcoming Events Overview -->
+    <div class="events-overview-container">
+      <h2>Ongoing Events</h2>
+      <div class="event-preview" id="ongoing-events-list">
+        <!-- JS will dynamically insert ongoing event cards here -->
+      </div>
+
+      <h2>Upcoming Events</h2>
+      <div class="event-preview" id="upcoming-events-list">
+        <!-- JS will dynamically insert upcoming event cards here -->
+      </div>
     </div>
-    
+
+    <!-- Quick Links to Manage or Create Events -->
+    <div class="dashboard-links-container">
+      <div class="quick-link-card">
+        <h3>Manage My Events</h3>
+        <p>View, edit, and track stats for your events.</p>
+        <a href="myevents.html" class="button">Go to My Events</a>
+      </div>
+      <div class="quick-link-card">
+        <h3>Create a New Event</h3>
+        <p>Start hosting right away. It’s easy!</p>
+        <a href="createevent.html" class="button">Create Event</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Section -->
+  <div class="footer__container">
+    <p>
+      We are constantly working to improve our product. For feedback/questions,
+      reach us at moves@email.com
+    </p>
+  </div>
+
+  <script>
+    // Basic stats for dashboard
+    document.getElementById('total-revenue').innerText = "8,750";
+    document.getElementById('total-events').innerText  = "7";
+    document.getElementById('total-rsvps').innerText   = "1,230";
+    document.getElementById('followers-count').innerText = "620";
+
+    // Sample data for Ongoing & Upcoming (short version)
+    const ongoingEvents = [
+      {
+        name: "Late Summer Bash",
+        eventType: "Party",
+        venue: "Rooftop Lounge",
+        address: "456 Skyline Dr",
+        startTime: "2023-08-25 18:00",
+        endTime: "2023-08-25 23:00",
+        totalRSVP: 75,
+        genderRSVP: { malePct: 66.7, femalePct: 33.3 },
+        currentlyAtEvent: 45, // absolute number
+        genderAtEvent: { malePct: 60, femalePct: 40 } // percentages
+      }
+    ];
+
+    const upcomingEvents = [
+      {
+        name: "Campus Kickoff",
+        eventType: "College Greek Life Party",
+        venue: "Alpha Beta House",
+        address: "University District",
+        startTime: "2023-09-01 20:00",
+        endTime: "2023-09-02 02:00",
+        totalRSVP: 40,
+        genderRSVP: { malePct: 50, femalePct: 50 }
+      }
+    ];
+
+    function createEventCard(event, isOngoing) {
+      const card = document.createElement('div');
+      card.classList.add('dynamic-event-card');
+
+      let content = `
+        <h3>${event.name} - <span class="event-type">${event.eventType}</span></h3>
+        <p><strong>Venue:</strong> ${event.venue}</p>
+        <p><strong>Address:</strong> ${event.address}</p>
+        <p><strong>Start Time:</strong> ${event.startTime}</p>
+        <p><strong>End Time:</strong> ${event.endTime}</p>
+        <p><strong>Total RSVPs:</strong> ${event.totalRSVP}</p>
+        <p><strong>Gender (RSVPs):</strong> M: ${event.genderRSVP.malePct}%, F: ${event.genderRSVP.femalePct}%</p>
+      `;
+
+      if (isOngoing) {
+        // Add info for current events
+        content += `
+          <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent}</p>
+          <p><strong>Gender (At Event):</strong> 
+             M: ${event.genderAtEvent.malePct}%, 
+             F: ${event.genderAtEvent.femalePct}%
+          </p>
+        `;
+      }
+
+      card.innerHTML = content;
+      return card;
+    }
+
+    function populateEvents() {
+      const ongoingList = document.getElementById('ongoing-events-list');
+      const upcomingList = document.getElementById('upcoming-events-list');
+
+      if (ongoingEvents.length === 0) {
+        ongoingList.innerHTML = `<p>No ongoing events at the moment.</p>`;
+      } else {
+        ongoingEvents.forEach(evt => {
+          ongoingList.appendChild(createEventCard(evt, true));
+        });
+      }
+
+      if (upcomingEvents.length === 0) {
+        upcomingList.innerHTML = `<p>No upcoming events.
+          <a href="createevent.html" class="hyperlink">Create an event</a></p>`;
+      } else {
+        upcomingEvents.forEach(evt => {
+          upcomingList.appendChild(createEventCard(evt, false));
+        });
+      }
+    }
+
+    populateEvents();
+  </script>
 </body>
 </html>
