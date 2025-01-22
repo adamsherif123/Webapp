@@ -8,35 +8,60 @@
   <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
 </head>
-<body>
+<body class="auth-loading">
 
-  <!-- Navbar Section -->
-  <nav class="navbar">
-    <div class="navbar__container">
-      <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
-      <div class="navbar__toggle" id="mobile-menu">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
-      <ul class="navbar__menu">
-        <li class="navbar__btn"><a href="./about-logged-in.html" class="button">About Us</a></li>
-        <li class="navbar__btn"><a href="createevent.html" class="button">Create Event</a></li>
-        <li class="navbar__btn"><a href="myevents.html" class="button">My Events</a></li>
-        <li class="navbar__btn"><a href="./contact.html" class="button">Contact Us</a></li>
-        <li class="navbar__user">
-          <div class="user-dropdown">
-            <span class="username"><i class='bx bxs-user-circle'></i>
-            </span>
-            <div class="dropdown-content">
-              <a href="./account-settings.html">Account Settings</a>
-              <a href="./">Log Out</a>
+    <!-- Shared Navbar Snippet -->
+    <nav class="navbar" id="main-navbar">
+        <div class="navbar__container">
+            <!-- Logo -->
+            <a href="dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+            
+            <!-- Hamburger Toggle -->
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </nav>
+    
+            <!-- Menu Items -->
+            <ul class="navbar__menu">
+                <!-- Home (visible for both logged in / logged out) -->
+                <li class="navbar__btn" data-page="dashboard.html">
+                <a href="dashboard.html" class="button">Home</a>
+                </li>
+                
+                <li class="navbar__btn" data-page="about-logged-in.html">
+                <a href="about-logged-in.html" class="button">About Us</a>
+                </li>
+                
+                <li class="navbar__btn" data-page="createevent.html">
+                <a href="createevent.html" class="button">Create Event</a>
+                </li>
+                <li class="navbar__btn" data-page="myevents.html">
+                <a href="myevents.html" class="button">My Events</a>
+                </li>
+        
+                <!-- Contact Us (visible for both) -->
+                <li class="navbar__btn" data-page="contact.html">
+                <a href="contact.html" class="button">Contact Us</a>
+                </li>
+
+                <!-- A user dropdown for account settings + logout -->
+                <li class="navbar__user">
+                    <div class="user-dropdown" data-nav="account">
+                        <span class="username">
+                            <span id="nav-displayname"></span>
+                            <i class='bx bxs-user-circle'></i>
+                        </span>
+                        <div class="dropdown-content">
+                        <a href="./account-settings.html">Account Settings</a>
+                        <a href="./" id="logout-link">Log Out</a>
+                        </div>
+                    </div>
+                </li>                
+            </ul>
+        </div>
+    </nav>
 
   <!-- Main Dashboard Section -->
   <div class="main dashboard-section">
@@ -98,94 +123,17 @@
     </p>
   </div>
 
-  <script>
-    // Basic stats for dashboard
-    document.getElementById('total-revenue').innerText = "8,750";
-    document.getElementById('total-events').innerText  = "7";
-    document.getElementById('total-rsvps').innerText   = "1,230";
-    document.getElementById('followers-count').innerText = "620";
+    <!-- Logout Confirmation Modal -->
+    <div class="confirm-overlay" id="logout-confirm-overlay" style="display: none;">
+        <div class="confirm-modal">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-buttons">
+            <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
+            <button class="btn modal-cancel-btn" id="logout-no">No</button>
+        </div>
+        </div>
+    </div>
 
-    // Sample data for Ongoing & Upcoming (short version)
-    const ongoingEvents = [
-      {
-        name: "Late Summer Bash",
-        eventType: "Party",
-        venue: "Rooftop Lounge",
-        address: "456 Skyline Dr",
-        startTime: "2023-08-25 18:00",
-        endTime: "2023-08-25 23:00",
-        totalRSVP: 75,
-        genderRSVP: { malePct: 66.7, femalePct: 33.3 },
-        currentlyAtEvent: 45, // absolute number
-        genderAtEvent: { malePct: 60, femalePct: 40 } // percentages
-      }
-    ];
-
-    const upcomingEvents = [
-      {
-        name: "Campus Kickoff",
-        eventType: "College Greek Life Party",
-        venue: "Alpha Beta House",
-        address: "University District",
-        startTime: "2023-09-01 20:00",
-        endTime: "2023-09-02 02:00",
-        totalRSVP: 40,
-        genderRSVP: { malePct: 50, femalePct: 50 }
-      }
-    ];
-
-    function createEventCard(event, isOngoing) {
-      const card = document.createElement('div');
-      card.classList.add('dynamic-event-card');
-
-      let content = `
-        <h3>${event.name} - <span class="event-type">${event.eventType}</span></h3>
-        <p><strong>Venue:</strong> ${event.venue}</p>
-        <p><strong>Address:</strong> ${event.address}</p>
-        <p><strong>Start Time:</strong> ${event.startTime}</p>
-        <p><strong>End Time:</strong> ${event.endTime}</p>
-        <p><strong>Total RSVPs:</strong> ${event.totalRSVP}</p>
-        <p><strong>Gender (RSVPs):</strong> M: ${event.genderRSVP.malePct}%, F: ${event.genderRSVP.femalePct}%</p>
-      `;
-
-      if (isOngoing) {
-        // Add info for current events
-        content += `
-          <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent}</p>
-          <p><strong>Gender (At Event):</strong> 
-             M: ${event.genderAtEvent.malePct}%, 
-             F: ${event.genderAtEvent.femalePct}%
-          </p>
-        `;
-      }
-
-      card.innerHTML = content;
-      return card;
-    }
-
-    function populateEvents() {
-      const ongoingList = document.getElementById('ongoing-events-list');
-      const upcomingList = document.getElementById('upcoming-events-list');
-
-      if (ongoingEvents.length === 0) {
-        ongoingList.innerHTML = `<p>No ongoing events at the moment.</p>`;
-      } else {
-        ongoingEvents.forEach(evt => {
-          ongoingList.appendChild(createEventCard(evt, true));
-        });
-      }
-
-      if (upcomingEvents.length === 0) {
-        upcomingList.innerHTML = `<p>No upcoming events.
-          <a href="createevent.html" class="hyperlink">Create an event</a></p>`;
-      } else {
-        upcomingEvents.forEach(evt => {
-          upcomingList.appendChild(createEventCard(evt, false));
-        });
-      }
-    }
-
-    populateEvents();
-  </script>
 </body>
 </html>

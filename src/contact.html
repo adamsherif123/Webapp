@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact Us | MOVES</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+</head>
+<body class="auth-loading">
+
+    <!-- Navbar -->
+    <nav class="navbar" id="main-navbar">
+        <div class="navbar__container">
+            <!-- Logo -->
+            <a href="dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+            
+            <!-- Hamburger Toggle -->
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <!-- Menu Items -->
+            <ul class="navbar__menu">
+                <li class="navbar__btn" data-page="dashboard.html">
+                    <a href="dashboard.html" class="button">Home</a>
+                </li>
+                <li class="navbar__btn" data-page="about-logged-in.html">
+                    <a href="about-logged-in.html" class="button">About Us</a>
+                </li>
+                <li class="navbar__btn" data-page="createevent.html">
+                    <a href="createevent.html" class="button">Create Event</a>
+                </li>
+                <li class="navbar__btn" data-page="myevents.html">
+                    <a href="myevents.html" class="button">My Events</a>
+                </li>
+                <li class="navbar__btn" data-page="contact.html">
+                    <a href="contact.html" class="button">Contact Us</a>
+                </li>
+                <!-- User Dropdown -->
+                <li class="navbar__user">
+                    <div class="user-dropdown" data-nav="account">
+                        <span class="username">
+                            <span id="nav-displayname"></span>
+                            <i class='bx bxs-user-circle'></i>
+                        </span>
+                        <div class="dropdown-content">
+                            <a href="./account-settings.html">Account Settings</a>
+                            <a href="./" id="logout-link">Log Out</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="main dashboard-section">
+
+      <h1 class="dashboard-heading">Contact Us</h1>
+      <p style="text-align:center; margin-bottom: 30px;">
+        We value your feedback and questions. You can reach us directly or send us a message below!
+      </p>
+
+      <!-- Contact Info Section -->
+      <div class="contact-info-container">
+        <div class="contact-method">
+          <h2>By Phone</h2>
+          <p>
+            <i class='bx bxs-phone'></i>
+            <a href="tel:+12908493190">(129) 084-93190</a>
+            <!-- or your real phone number -->
+          </p>
+        </div>
+        <div class="contact-method">
+          <h2>By Email</h2>
+          <p>
+            <i class='bx bxs-envelope'></i>
+            <a href="mailto:moves@email.com">moves@email.com</a>
+            <!-- or any email link you want -->
+          </p>
+        </div>
+      </div>
+
+      <!-- Contact Form Section -->
+      <div class="contact-form-container">
+        <h2>Send Us a Message</h2>
+        <form id="contact-form">
+          <label for="contact-name">Name</label>
+          <input type="text" id="contact-name" placeholder="Your Name" required />
+
+          <label for="contact-email">Email</label>
+          <input type="email" id="contact-email" placeholder="you@example.com" required />
+
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" rows="5" placeholder="Your message..." required></textarea>
+
+          <button type="submit" class="btn contact-submit-btn">Send</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer__container">
+      <p>We are constantly working to improve our product. 
+         For feedback/questions, reach us at the contacts above or at (129)084-93190.
+      </p>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="confirm-overlay" id="logout-confirm-overlay" style="display: none;">
+        <div class="confirm-modal">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-buttons">
+                <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
+                <button class="btn modal-cancel-btn" id="logout-no">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ensure your alert overlay is loaded somewhere -->
+    <!-- e.g., if it's in a shared partial, that's fine, as long as #alert-overlay & #alert-ok exist -->
+
+</body>
+</html>

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Account Settings</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
+<script defer src="bundle.js"></script></head>
+<body class="auth-loading">
+    
+    <!-- Shared Navbar -->
+    <nav class="navbar" id="main-navbar">
+        <div class="navbar__container">
+            <!-- Logo -->
+            <a href="dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+            
+            <!-- Hamburger Toggle -->
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <!-- Menu Items -->
+            <ul class="navbar__menu">
+                <li class="navbar__btn" data-page="dashboard.html">
+                    <a href="dashboard.html" class="button">Home</a>
+                </li>
+                <li class="navbar__btn" data-page="about-logged-in.html">
+                    <a href="about-logged-in.html" class="button">About Us</a>
+                </li>
+                <li class="navbar__btn" data-page="createevent.html">
+                    <a href="createevent.html" class="button">Create Event</a>
+                </li>
+                <li class="navbar__btn" data-page="myevents.html">
+                    <a href="myevents.html" class="button">My Events</a>
+                </li>
+                <li class="navbar__btn" data-page="contact.html">
+                    <a href="contact.html" class="button">Contact Us</a>
+                </li>
+                <!-- User Dropdown -->
+                <li class="navbar__user">
+                    <div class="user-dropdown" data-nav="account">
+                        <span class="username">
+                            <span id="nav-displayname"></span>
+                            <i class='bx bxs-user-circle'></i>
+                        </span>
+                        <div class="dropdown-content">
+                            <a href="./account-settings.html">Account Settings</a>
+                            <a href="./" id="logout-link">Log Out</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main dashboard-section">
+      <h1 class="dashboard-heading" style="margin-bottom: 10px;">My Account</h1>
+      <p style="text-align:center; margin-bottom: 30px;">
+        View or update your account details below.
+      </p>
+
+      <div class="account-settings-container">
+        <!-- Left side: Possibly a profile image or summary -->
+        <div class="account-profile-section">
+          <div class="profile-image-container">
+            <!-- If you'd like a round image or something else, style accordingly -->
+            <img id="settings-photo-preview" src="./images/default-profile.png" alt="Profile" />
+          </div>
+          <div class="profile-name-display">
+            <!-- We'll dynamically update with org name, etc. if you want. -->
+            <h2 id="profile-display-name">Your Organization Name</h2>
+          </div>
+        </div>
+
+        <!-- Right side: The editable form -->
+        <div class="account-form-section">
+          <form id="account-settings-form">
+              <!-- Email (disabled) -->
+              <div class="form-group">
+                <label for="settings-email">Email</label>
+                <input type="email" id="settings-email" disabled />
+              </div>
+
+              <!-- Phone -->
+              <div class="form-group">
+                <label for="settings-phone">Phone Number</label>
+                <input type="tel" id="settings-phone" placeholder="Enter a phone number..." />
+              </div>
+
+              <!-- Org Name -->
+              <div class="form-group">
+                <label for="settings-organization-name">Organization Name</label>
+                <input type="text" id="settings-organization-name" required/>
+              </div>
+
+              <!-- Org Type -->
+              <div class="form-group">
+                <label for="settings-organization-type">Organization Type</label>
+                <select id="settings-organization-type" name="organization-type">
+                  <option value="" disabled selected>Select an option</option>
+                  <option value="Bar">Bar</option>
+                  <option value="Restaurant">Restaurant</option>
+                  <option value="Night Club">Night Club</option>
+                  <option value="Greek Life">Greek Life</option>
+                  <option value="Student Club">Student Club</option>
+                  <option value="Other">Other (please specify)</option>      
+                </select>
+                <div id="settings-other-type-container" style="display: none; margin-top: 10px;">
+                  <label for="settings-other-type">Specify:</label>
+                  <input type="text" id="settings-other-type" placeholder="Enter organization type..." />
+                </div>
+              </div>
+
+              <!-- Description -->
+              <div class="form-group">
+                <label for="settings-description">Brief Description/About</label>
+                <textarea id="settings-description" placeholder="Tell us about your organization..."></textarea>
+              </div>
+
+              <!-- Location -->
+              <div class="form-group">
+                <label for="settings-location">Primary Location</label>
+                <input type="text" id="settings-location" placeholder="Search for a location..." />
+              </div>
+
+              <!-- Photo -->
+              <div class="form-group">
+                <label for="settings-photo">Change Profile Photo</label>
+                <input type="file" id="settings-photo" accept="image/*"/>
+              </div>
+
+              <!-- Linked Accounts -->
+              <div class="form-group">
+                <label for="multi-select-input-settings">Linked Moves App Accounts</label>
+                <div class="multi-select-container" id="multi-select-container-settings">
+                  <div id="selected-users-settings" class="selected-users"></div>
+                  <input type="text" 
+                         id="multi-select-input-settings" 
+                         placeholder="Search for users..."
+                         autocomplete="off">
+                  <div id="suggestions-box-settings" class="suggestions-box"></div>
+                </div>
+              </div>
+
+              <button type="submit" class="btn save-changes-btn" style="margin-top: 20px;">
+                Save Changes
+              </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer__container">
+      <p>We are constantly working to improve our product. 
+         For feedback/questions, reach us at moves@email.com
+      </p>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="confirm-overlay" id="logout-confirm-overlay" style="display: none;">
+        <div class="confirm-modal">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-buttons">
+                <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
+                <button class="btn modal-cancel-btn" id="logout-no">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Make sure you have your global alert overlay with id="alert-ok" somewhere. -->
+    <!-- E.g., if you have it in a common HTML partial, it should be on the page. -->
+
+</body>
+</html>

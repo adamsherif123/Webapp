@@ -7,200 +7,219 @@
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script defer src="bundle.js"></script></head>
-<body class="create-event-page">
 
-  <!-- Navbar -->
-  <nav class="navbar">
-    <div class="navbar__container">
-      <a href="./dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
-      <div class="navbar__toggle" id="mobile-menu">
-        <span class="bar"></span>
-        <span class="bar"></span>
-        <span class="bar"></span>
-      </div>
-      <ul class="navbar__menu">
-        <li class="navbar__btn"><a href="./dashboard.html" class="button">Home</a></li>
-        <li class="navbar__btn"><a href="./about-logged-in.html" class="button">About Us</a></li>
-        <li class="navbar__btn"><a href="./myevents.html" class="button">My Events</a></li>
-        <li class="navbar__btn"><a href="./" class="button">Contact Us</a></li>
-        <li class="navbar__user">
-          <div class="user-dropdown">
-            <span class="username">
-              myusername
-              <i class='bx bxs-user-circle'></i>
-            </span>
-            <div class="dropdown-content">
-              <a href="./account-settings.html">Account Settings</a>
-              <a href="./">Log Out</a>
+<body class="auth-loading" id="create-event-page">
+
+    <!-- Shared Navbar Snippet -->
+    <nav class="navbar" id="main-navbar">
+        <div class="navbar__container">
+            <!-- Logo -->
+            <a href="dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+            
+            <!-- Hamburger Toggle -->
+            <div class="navbar__toggle" id="mobile-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
             </div>
-          </div>
-        </li>
-      </ul>
-    </div>
-  </nav>
+    
+            <!-- Menu Items -->
+            <ul class="navbar__menu">
+                <!-- Home (visible for both logged in / logged out) -->
+                <li class="navbar__btn" data-page="dashboard.html">
+                <a href="dashboard.html" class="button">Home</a>
+                </li>
+                
+                <li class="navbar__btn" data-page="about-logged-in.html">
+                <a href="about-logged-in.html" class="button">About Us</a>
+                </li>
+                
+                <li class="navbar__btn" data-page="createevent.html">
+                <a href="createevent.html" class="button">Create Event</a>
+                </li>
+                <li class="navbar__btn" data-page="myevents.html">
+                <a href="myevents.html" class="button">My Events</a>
+                </li>
+        
+                <!-- Contact Us (visible for both) -->
+                <li class="navbar__btn" data-page="contact.html">
+                <a href="contact.html" class="button">Contact Us</a>
+                </li>
+
+                <!-- A user dropdown for account settings + logout -->
+                <li class="navbar__user">
+                    <div class="user-dropdown" data-nav="account">
+                        <span class="username">
+                            <span id="nav-displayname"></span>
+                            <i class='bx bxs-user-circle'></i>
+                        </span>
+                        <div class="dropdown-content">
+                        <a href="./account-settings.html">Account Settings</a>
+                        <a href="./" id="logout-link">Log Out</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
 
   <!-- Main Container -->
-  <div class="container">
+    <div class="container">
     <div class="form-container">
       
       <!-- Form Section -->
       <div class="form-section">
-        <h2>Create Your Event</h2>
-        <p class="form-intro">
-            Fill out the details below to post your event to the <strong>MOVES</strong> app. Fields marked with <span class="required-asterisk">*</span> are required.
-        </p>
+            <h2>Create Your Event</h2>
+            <p class="form-intro">
+                Fill out the details below to post your event to the <strong>MOVES</strong> app. Fields marked with <span class="required-asterisk">*</span> are required.
+            </p>
 
-        <!-- Event Form -->
-        <form id="event-form">
-          <!-- Event Name -->
-          <label for="event-name">Event name*</label>
-          <input 
-            type="text" 
-            id="event-name" 
-            name="event-name" 
-            placeholder="Enter event name..." 
-            required 
-          />
-
-          <!-- Start/End Times -->
-          <div class="time-inputs">
-            <div>
-              <label for="start-time">Start time*</label>
-              <input 
-                type="datetime-local" 
-                id="start-time" 
-                name="start-time" 
-                required 
-              />
-            </div>
-            <div>
-              <label for="end-time">End time*</label>
-              <input 
-                type="datetime-local" 
-                id="end-time" 
-                name="end-time" 
-                required 
-              />
-            </div>
-          </div>
-          
-          <!-- Venue Name -->
-          <label for="venue-name">Venue name (optional)</label>
-          <input 
-            type="text" 
-            id="venue-name" 
-            name="venue-name" 
-            placeholder="Enter venue name..."
-          />
-
-          <!-- Address -->
-          <label for="address">Location*</label>
-          <input 
-            type="text" 
-            id="search-input" 
-            name="search-input" 
-            placeholder="Enter address..." 
-            required 
-          />
-
-          <!-- Event Type -->
-          <label for="event-type">Event type*</label>
-          <select class="dropdown" id="event-type" name="event-type" required>
-            <option value="">Choose an option</option>
-            <option value="Festival">Festival</option>
-            <option value="Party">Party</option>
-            <option value="Birthday">Birthday</option>
-            <option value="College Greek Life Party">Frat/Sorority party</option>
-            <option value="Concert">Concert</option>
-            <option value="Cruise">Cruise</option>
-            <option value="Comedy">Comedy show</option>
-            <option value="Art">Art</option>
-            <option value="Gala">Gala</option>
-            <option value="Music Festival">Music festival</option>
-            <option value="Other">Other (please specify)</option>
-          </select>
-          <div 
-            id="other-event-type-container" 
-            style="display: none; margin-top: 10px;"
-          >
-            <label for="other-event-type">Please specify event type:</label>
+            <!-- Event Form -->
+            <form id="event-form">
+            <!-- Event Name -->
+            <label for="event-name">Event name*</label>
             <input 
-              type="text" 
-              id="other-event-type" 
-              name="other-event-type" 
-              placeholder="Enter your event type..." 
+                type="text" 
+                id="event-name" 
+                name="event-name" 
+                placeholder="Enter event name..." 
+                required 
             />
-          </div>
 
-          <!-- Who Can See The Event -->
-          <label for="invite-type">Who can see the event?*</label>
-          <select class="dropdown" id="invite-type" name="invite-type" required>
-            <option value="">Choose an option</option>
-            <option value="public">Everyone on the Moves App!</option>
-            <option value="followers">Followers only</option>
-            <option value="invites">Invites only</option>
-          </select>
-          <div id="invitees-container" style="display: none; margin-top: 10px;">
-            <label for="invitees-select">Invite users:</label>
-            <select 
-              id="invitees-select" 
-              name="invitees[]" 
-              multiple="multiple" 
-              style="width: 100%;"
-            >
-              <option value="user1">Jad Alami</option>
-              <option value="user2">Emile Al-Billeh</option>
-              <option value="user3">Balint Kidd</option>
-              <option value="user4">Adam Sherif</option>
-              <option value="user5">Lionel Messi</option>
-              <option value="user6">Cristiano Ronaldo</option>
-              <option value="user7">John Cena</option>
-              <option value="user8">Randy Orton</option>
-              <option value="user9">Tyson Fury</option>
+            <!-- Start/End Times -->
+            <div class="time-inputs">
+                <div>
+                <label for="start-time">Start time*</label>
+                <input 
+                    type="datetime-local" 
+                    id="start-time" 
+                    name="start-time" 
+                    required 
+                />
+                </div>
+                <div>
+                <label for="end-time">End time*</label>
+                <input 
+                    type="datetime-local" 
+                    id="end-time" 
+                    name="end-time" 
+                    required 
+                />
+                </div>
+            </div>
+            
+            <!-- Venue Name -->
+            <label for="venue-name">Venue name (optional)</label>
+            <input 
+                type="text" 
+                id="venue-name" 
+                name="venue-name" 
+                placeholder="Enter venue name..."
+            />
+
+            <!-- Address -->
+            <label for="address">Location*</label>
+            <input 
+                type="text" 
+                id="search-input" 
+                name="search-input" 
+                placeholder="Enter address..." 
+                required 
+            />
+
+            <!-- Event Type -->
+            <label for="event-type">Event type*</label>
+            <select class="dropdown" id="event-type" name="event-type" required>
+                <option value="">Choose an option</option>
+                <option value="Bar">Bar</option>
+                <option value="Party">Party</option>
+                <option value="Restaurant">Restaurant</option>
+                <option value="College Greek Life Party">Frat/Sorority party</option>
+                <option value="Concert">Concert</option>
+                <option value="Club meeting">Club meeting</option>
+                <option value="Gala">Gala</option>
+                <option value="Music Festival">Music festival</option>
+                <option value="Other">Other (please specify)</option>
             </select>
-          </div>
+            <div 
+                id="other-event-type-container" 
+                style="display: none; margin-top: 10px;"
+            >
+                <label for="other-event-type">Please specify event type:</label>
+                <input 
+                type="text" 
+                id="other-event-type" 
+                name="other-event-type" 
+                placeholder="Enter your event type..." 
+                />
+            </div>
 
-          <!-- Ticketing -->
-          <label for="ticketing">Do you want to sell tickets?*</label>
-          <select class="dropdown" id="ticketing" name="ticketing" required>
-            <option value="">Choose an option</option>
-            <option value="No">No</option>
-            <option value="Yes">Yes</option>
-          </select>
-          <div id="ticket-price-container" style="display: none; margin-top: 10px;">
-            <label for="ticket-price">Ticket price (USD)*</label>
-            <input 
-              type="number" 
-              id="ticket-price" 
-              name="ticket-price" 
-              placeholder="Enter ticket price (USD)..." 
-            />
-            <label for="capacity">How many tickets do you want to sell? (optional)</label>
-            <input 
-              type="number" 
-              id="capacity" 
-              name="capacity" 
-              placeholder="Enter maximum capacity..." 
-            />
-          </div>
+            <!-- Who Can See The Event -->
+            <label for="invite-type">Who can see the event?*</label>
+            <select class="dropdown" id="invite-type" name="invite-type" required>
+                <option value="">Choose an option</option>
+                <option value="public">Everyone on the Moves App!</option>
+                <option value="followers">Followers only</option>
+                <option value="invites">Invites only</option>
+            </select>
+            <div id="invitees-container" style="display: none; margin-top: 10px;">
+                <label for="invitees-select">Invite users:</label>
+                <select 
+                id="invitees-select" 
+                name="invitees[]" 
+                multiple="multiple" 
+                style="width: 100%;"
+                >
+                <option value="user1">Jad Alami</option>
+                <option value="user2">Emile Al-Billeh</option>
+                <option value="user3">Balint Kidd</option>
+                <option value="user4">Adam Sherif</option>
+                <option value="user5">Lionel Messi</option>
+                <option value="user6">Cristiano Ronaldo</option>
+                <option value="user7">John Cena</option>
+                <option value="user8">Randy Orton</option>
+                <option value="user9">Tyson Fury</option>
+                </select>
+            </div>
 
-          <!-- Description -->
-          <label for="event-description">Event description (optional)</label>
-          <textarea 
-            id="event-description" 
-            placeholder="Tell people about your event..."
-          ></textarea>
+            <!-- Ticketing -->
+            <label for="ticketing">Do you want to sell tickets?*</label>
+            <select class="dropdown" id="ticketing" name="ticketing" required>
+                <option value="">Choose an option</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+            </select>
+            <div id="ticket-price-container" style="display: none; margin-top: 10px;">
+                <label for="ticket-price">Ticket price (USD)*</label>
+                <input 
+                type="number" 
+                id="ticket-price" 
+                name="ticket-price" 
+                placeholder="Enter ticket price (USD)..." 
+                />
+                <label for="capacity">How many tickets do you want to sell? (optional)</label>
+                <input 
+                type="number" 
+                id="capacity" 
+                name="capacity" 
+                placeholder="Enter maximum capacity..." 
+                />
+            </div>
 
-          <!-- Create Event Button -->
-          <button type="submit" class="btn create-event-btn">
-            Create Event
-          </button>
-        </form>
-      </div>
+            <!-- Description -->
+            <label for="event-description">Event description (optional)</label>
+            <textarea 
+                id="event-description" 
+                placeholder="Tell people about your event..."
+            ></textarea>
+
+            <!-- Create Event Button -->
+            <button type="submit" class="btn create-event-btn">
+                Create Event
+            </button>
+            </form>
+        </div>
 
       <!-- Gradient Placeholder for Side Image -->
       <div class="image-section">
@@ -215,7 +234,7 @@
         <input type="file" id="image-upload" accept="image/*" style="display: none;" />
       </div>
     </div>
-  </div>
+    </div>
 
   <!-- Custom Confirmation Modal -->
   <div class="confirm-overlay" id="confirm-overlay">
@@ -229,6 +248,29 @@
     </div>
   </div>
 
+  <!-- Custom Reusable Alert Modal (for success/error) -->
+  <div class="alert-overlay" id="alert-overlay" style="display: none">
+    <div class="alert-modal">
+      <h2 id="alert-title">Notification</h2>
+      <p id="alert-message">This is the alert message</p>
+      <div class="modal-buttons">
+        <button class="btn modal-confirm-btn" id="alert-ok">Back to home</button>
+      </div>
+    </div>
+  </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="confirm-overlay" id="logout-confirm-overlay" style="display: none;">
+        <div class="confirm-modal">
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-buttons">
+                <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
+                <button class="btn modal-cancel-btn" id="logout-no">No</button>
+            </div>
+        </div>
+    </div>
+
   <!-- Footer -->
   <div class="footer__container">
     <p>
@@ -237,136 +279,5 @@
     </p>
   </div>
 
-  <!-- Scripts -->
-  <script>
-    // If event type = "Other", show additional input
-    document.addEventListener('DOMContentLoaded', () => {
-      const eventTypeSelect = document.getElementById('event-type');
-      const otherContainer = document.getElementById('other-event-type-container');
-      const otherInput = document.getElementById('other-event-type');
-
-      eventTypeSelect.addEventListener('change', function() {
-        if (this.value === "Other") {
-          otherContainer.style.display = "block";
-          otherInput.required = true;
-        } else {
-          otherContainer.style.display = "none";
-          otherInput.required = false;
-          otherInput.value = "";
-        }
-      });
-    });
-
-    // If invites only
-    document.addEventListener('DOMContentLoaded', () => {
-      const inviteTypeSelect = document.getElementById('invite-type');
-      const inviteesContainer = document.getElementById('invitees-container');
-      const inviteesSelect = document.getElementById('invitees-select');
-
-      inviteTypeSelect.addEventListener('change', function() {
-        if (this.value === 'invites') {
-          inviteesContainer.style.display = 'block';
-        } else {
-          inviteesContainer.style.display = 'none';
-          inviteesSelect.selectedIndex = -1;
-        }
-      });
-    });
-
-    // Select2 for invitees
-    $(document).ready(function() {
-      $('#invitees-select').select2({
-        placeholder: "Search and invite users",
-        allowClear: true
-      });
-    });
-
-    // Ticketing logic
-    document.addEventListener('DOMContentLoaded', () => {
-      const ticketingSelect = document.getElementById('ticketing');
-      const ticketPriceContainer = document.getElementById('ticket-price-container');
-      const ticketPriceInput = document.getElementById('ticket-price');
-
-      ticketingSelect.addEventListener('change', function() {
-        if (this.value === "Yes") {
-          ticketPriceContainer.style.display = "block";
-          ticketPriceInput.required = true;
-        } else {
-          ticketPriceContainer.style.display = "none";
-          ticketPriceInput.required = false;
-          ticketPriceInput.value = "";
-        }
-      });
-    });
-
-    // datetime-local color logic
-    const datetimeInputs = document.querySelectorAll('input[type="datetime-local"]');
-    datetimeInputs.forEach(input => {
-      input.addEventListener('input', function() {
-        this.style.color = this.value ? 'black' : '#908d8d';
-      });
-      if (input.value) input.style.color = 'black';
-      else input.style.color = '#908d8d';
-    });
-
-    // dropdown color logic
-    const selectElements = document.getElementsByClassName('dropdown');
-    for (const selectEl of selectElements) {
-      selectEl.addEventListener('change', function() {
-        this.style.color = this.value === "" ? '#908d8d' : 'black';
-      });
-      selectEl.style.color = selectEl.value === "" ? '#908d8d' : 'black';
-    }
-
-    // Confirmation modal logic
-    const eventForm      = document.getElementById('event-form');
-    const confirmOverlay = document.getElementById('confirm-overlay');
-    const confirmYes     = document.getElementById('confirm-yes');
-    const confirmNo      = document.getElementById('confirm-no');
-
-    eventForm.addEventListener('submit', function(e) {
-      e.preventDefault();
-      confirmOverlay.style.display = 'flex'; 
-    });
-
-    confirmYes.addEventListener('click', function() {
-      confirmOverlay.style.display = 'none';
-      eventForm.submit();
-    });
-
-    confirmNo.addEventListener('click', function() {
-      confirmOverlay.style.display = 'none';
-    });
-  </script>
-
-  <!-- For side gradient placeholder -> user upload logic -->
-  <script>
-    const partyImageDiv = document.getElementById('party-image');
-    const placeholderText = document.getElementById('placeholder-text');
-    const fileInput = document.getElementById('image-upload');
-    const changeImageButton = document.querySelector('.change-image-btn');
-
-    function triggerFileInput() {
-      fileInput.click();
-    }
-
-    partyImageDiv.addEventListener('click', triggerFileInput);
-    changeImageButton.addEventListener('click', triggerFileInput);
-
-    fileInput.addEventListener('change', function(event) {
-      if (event.target.files && event.target.files[0]) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-          // Replace gradient background with the uploaded image
-          partyImageDiv.style.background = `url('${e.target.result}') center center / cover no-repeat`;
-          // Hide or remove the text
-          placeholderText.style.display = 'none';
-        };
-        reader.readAsDataURL(event.target.files[0]);
-      }
-    });
-  </script>
-
-  <script src="bundle.js"></script>
 </body>
 </html>

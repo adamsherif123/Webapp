@@ -3,38 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title> 
-    <link rel="stylesheet" href="styles.css"> <!-- Link to your CSS file -->
+    <title>Phone Login Page</title> 
+    <link rel="stylesheet" href="styles.css">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
-</head>
+<script defer src="bundle.js"></script></head>
 <body class="form-page">
     
     <div class="wrapper">
-        <form id="phone-login-form" action="">
-            <a class=moves-title href="./"><h1>MOVES</h1></a>
+        <form id="phone-login-form">
+            <a class="moves-title" href="./"><h1>MOVES</h1></a>
+            
+            <!-- Phone Number Input -->
             <div class="input-box">
                 <input type="tel" id="login-phone" placeholder="Phone Number" required>
                 <i class='bx bxs-phone'></i>
             </div>
-            <div class="alternative-login">
-                <a href="./login.html">Use email instead</a>
+            
+            <!-- reCAPTCHA Container -->
+            <div id="recaptcha-container"></div>
+            
+            <!-- Verification Code Input (Initially Hidden) -->
+            <div class="input-box" id="verification-code-container" style="display: none;">
+                <input type="text" id="verification-code" placeholder="Enter Verification Code" />
+                <i class='bx bxs-lock-alt'></i>
             </div>
             
-            <div class="input-box">
-                <input type="password" id="phone-login-password" placeholder="Password" required>
-                <i class='bx bxs-lock-alt' ></i>
-            </div>
-            <div class="remember-forgot">
-                <label><input type="checkbox">Remember Me</label>
-                <a href="./forgot.html">Forgot Password?</a>
-            </div>
-            <button type="submit" class="btn">Login</button>
+            <!-- Submit Button -->
+            <button type="submit" class="btn" id="send-code-btn">Send Verification Code</button>
+            
+            <!-- Register Link -->
             <div class="register-link">
                 <p>Don't have an account? <a href="./signup.html">Sign Up</a></p>
             </div>
         </form>
     </div>
 
+    <!-- Custom Reusable Alert Modal -->
+    <div class="alert-overlay" id="alert-overlay">
+        <div class="alert-modal">
+            <h2 id="alert-title">Notification</h2>
+            <p id="alert-message">This is the alert message</p>
+            <div class="modal-buttons">
+                <!-- Just a single "OK" or "Close" button -->
+                <button class="btn modal-confirm-btn" id="alert-ok">OK</button>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>

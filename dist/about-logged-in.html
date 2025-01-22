@@ -8,57 +8,58 @@
     <!--The above line links the stylesheet -->
     <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet">
-</head>
-<body>
+<script defer src="bundle.js"></script></head>
+<body class="auth-loading"">
 
-    <!-- The line below creates the top nav bar -->
-    <nav class="navbar">
-        <!-- Creates a div navbar container class for the logo -->
+    <!-- Shared Navbar Snippet -->
+    <nav class="navbar" id="main-navbar">
         <div class="navbar__container">
-            <a href="./" class="navbar__logo"><h1>MOVES</h1></a>
-            <!--The above line creates the logo with a navigation of / (nothing) -->
-            <div class="navbar__toggle" id="mobile-menu"> 
-            <!-- Three lines menu-->
+            <!-- Logo -->
+            <a href="dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+            
+            <!-- Hamburger Toggle -->
+            <div class="navbar__toggle" id="mobile-menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
             </div>
+    
+            <!-- Menu Items -->
             <ul class="navbar__menu">
+                <!-- Home (visible for both logged in / logged out) -->
+                <li class="navbar__btn" data-page="dashboard.html">
+                <a href="dashboard.html" class="button">Home</a>
+                </li>
                 
-                <li class="navbar__btn">
-                    <a href="./dashboard.html" class="button">
-                        Home
-                    </a>
+                <li class="navbar__btn" data-page="about-logged-in.html">
+                <a href="about-logged-in.html" class="button">About Us</a>
+                </li>
+                
+                <li class="navbar__btn" data-page="createevent.html">
+                <a href="createevent.html" class="button">Create Event</a>
+                </li>
+                <li class="navbar__btn" data-page="myevents.html">
+                <a href="myevents.html" class="button">My Events</a>
+                </li>
+        
+                <!-- Contact Us (visible for both) -->
+                <li class="navbar__btn" data-page="contact.html">
+                <a href="contact.html" class="button">Contact Us</a>
                 </li>
 
-                <li class="navbar__btn">
-                    <a href="./createevent.html" class="button">
-                        Create Event
-                    </a>
-                </li>
-                <li class="navbar__btn">
-                    <a href="./myevents.html" class="button">
-                        My Events
-                    </a>
-                </li>
-                <li class="navbar__btn">
-                    <a href="./contactus.html" class="button">
-                        Contact Us
-                    </a>
-                </li>
+                <!-- A user dropdown for account settings + logout -->
                 <li class="navbar__user">
-                    <div class="user-dropdown">
+                    <div class="user-dropdown" data-nav="account">
                         <span class="username">
-                            myusername
+                            <span id="nav-displayname"></span>
                             <i class='bx bxs-user-circle'></i>
                         </span>
                         <div class="dropdown-content">
-                            <a href="./account-settings.html">Account Settings</a>
-                            <a href="./">Log Out</a>
+                        <a href="./account-settings.html">Account Settings</a>
+                        <a href="./" id="logout-link">Log Out</a>
                         </div>
                     </div>
                 </li>
-
             </ul>
         </div>
     </nav>
@@ -88,6 +89,30 @@
                         <img src="./images/MovesApp.png" alt="pic">
                     </div>
                 </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div class="confirm-overlay" id="confirm-overlay">
+        <div class="confirm-modal">
+        <h2>Confirm Event</h2>
+        <p>Are you sure you want to create this event?</p>
+        <div class="modal-buttons">
+            <button class="btn modal-confirm-btn" id="confirm-yes">Yes</button>
+            <button class="btn modal-cancel-btn" id="confirm-no">No</button>
+        </div>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="confirm-overlay" id="logout-confirm-overlay" style="display: none;">
+        <div class="confirm-modal">
+        <h2>Confirm Logout</h2>
+        <p>Are you sure you want to log out?</p>
+        <div class="modal-buttons">
+            <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
+            <button class="btn modal-cancel-btn" id="logout-no">No</button>
+        </div>
         </div>
     </div>
 

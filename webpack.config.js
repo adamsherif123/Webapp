@@ -3,7 +3,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.js', // Main JavaScript entry point
+    entry: './src/main.js', // Main JavaScript entry point
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, 'dist'),
@@ -47,6 +47,30 @@ module.exports = {
             template: './src/dashboard.html',
             filename: 'dashboard.html',
         }),
+        new HtmlWebpackPlugin({
+            template: './src/phone-login.html',
+            filename: 'phone-login.html',
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/myevents.html',
+            filename: 'myevents.html',
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/about-logged-in.html',
+            filename: 'about-logged-in.html',
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/about.html',
+            filename: 'about.html',
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/account-settings.html',
+            filename: 'account-settings.html',
+        }),
+        new HtmlWebpackPlugin({
+            template: './src/contact.html',
+            filename: 'contact.html',
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -59,7 +83,13 @@ module.exports = {
                             '**/signup.html',
                             '**/createevent.html',
                             '**/forgot.html',
-                            '**/dashboard.html'
+                            '**/dashboard.html',
+                            '**/phone-login.html',
+                            '**/about-logged-in.html',
+                            '**/myevents.html',
+                            '**/about.html',
+                            '**/account-settings.html',
+                            '**/contact.html'
                         ],
                     },
                 },

@@ -10,42 +10,42 @@
 <script defer src="bundle.js"></script></head>
 <body>
 
-    <!-- The line below creates the top nav bar -->
-    <nav class="navbar">
-        <!-- Creates a div navbar container class for the logo -->
+    <!-- Shared Navbar Snippet for Logged Out Pages -->
+    <nav class="navbar" id="main-navbar">
         <div class="navbar__container">
-            <a href="./" class="navbar__logo"><h1>MOVES</h1></a>
-            <!--The above line creates the logo with a navigation of / (nothing) -->
-            <div class="navbar__toggle" id="mobile-menu"> 
-            <!-- Three lines menu-->
+            <!-- Logo -->
+            <a href="index.html" class="navbar__logo"><h1>MOVES</h1></a>
+            
+            <!-- Hamburger Toggle -->
+            <div class="navbar__toggle" id="mobile-menu">
                 <span class="bar"></span>
                 <span class="bar"></span>
                 <span class="bar"></span>
             </div>
-            <ul class="navbar__menu" id="navbarMenu">
+    
+            <!-- Menu Items -->
+            <ul class="navbar__menu">
+                <!-- Home (visible for both logged in / logged out) -->
+                <li class="navbar__btn" data-page="index.html">
+                <a href="index.html" class="button">Home</a>
+                </li>
+                
+                <li class="navbar__btn" data-page="about.html">
+                <a href="about.html" class="button">About Us</a>
+                </li>
                 
                 <li class="navbar__btn">
-                    <a href="./about.html" class="button">
-                        About Us
-                    </a>
+                <a href="login.html" class="button">Log In</a>
                 </li>
 
                 <li class="navbar__btn">
-                    <a href="./login.html" class="button">
-                        Log In
-                    </a>
+                <a href="signup.html" class="button">Sign Up</a>
                 </li>
-                <li class="navbar__btn">
-                    <a href="./signup.html" class="button">
-                        Sign Up
-                    </a>
+        
+                <!-- Contact Us (visible for both) -->
+                <li class="navbar__btn" data-page="contact.html">
+                <a href="contact.html" class="button">Contact Us</a>
                 </li>
-                <li class="navbar__btn">
-                    <a href="./" class="button">
-                        Contact Us
-                    </a>
-                </li>
-
             </ul>
         </div>
     </nav>
@@ -73,6 +73,7 @@
     <div class="footer__container">
         <p>We are constantly working to improve our product. For feedback/questions, reach us at moves@email.com or +12908493190.</p>
     </div>
+  
     
 </body>
 </html>
