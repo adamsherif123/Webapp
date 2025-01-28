@@ -1219,7 +1219,18 @@ body {
    transition: opacity 0.3s ease; /* optional fade-in once removed */
  }
  
+/* Map and Location styling*/
+#map {
+   height: 300px;
+   width: 100%;
+   border-bottom-left-radius: 10px;
+   border-bottom-right-radius: 10px;
+}
 
+#search-input {
+   border-bottom-left-radius: 0px;
+   border-bottom-right-radius: 0px;
+}
  
 
 

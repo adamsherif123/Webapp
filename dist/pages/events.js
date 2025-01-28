@@ -1,7 +1,7 @@
 // src/pages/events.js
 
-import { db } from '../firebase.js';
-import { addDoc, collection } from 'firebase/firestore';
+import { auth, db } from '../firebase.js';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { showAlert } from '../utils/alerts.js';
 
 // We'll import jQuery and select2
@@ -103,68 +103,90 @@ export function initEventForm() {
     if (confirmOverlay) confirmOverlay.style.display = 'flex';
   });
 
+  // -- (A) We'll store lat/long in these variables
+  let latitude = null;
+  let longitude = null;
+
   // If user clicks "Yes", create the event in Firestore
   if (confirmYes) {
     confirmYes.addEventListener('click', async function() {
-      if (confirmOverlay) confirmOverlay.style.display = 'none';
+        if (confirmOverlay) confirmOverlay.style.display = 'none';
 
-      // Gather form data
-      const eventName = document.getElementById('event-name').value;
-      const startTime = document.getElementById('start-time').value;
-      const endTime   = document.getElementById('end-time').value;
-      const location  = document.getElementById('search-input').value;
-      const selectedType = eventTypeSelect.value;
-      const otherVal = otherInput.value;
-      const finalEventType = (selectedType === 'Other') ? otherVal : selectedType;
+        // Gather form data
+        const eventName = document.getElementById('event-name').value;
+        const location  = document.getElementById('search-input').value;
+        const selectedType = eventTypeSelect.value;
+        const otherVal = otherInput.value;
+        const finalEventType = (selectedType === 'Other') ? otherVal : selectedType;
 
-      const venueName = document.getElementById('venue-name').value || null;
-      const inviteType = inviteTypeSelect.value || null;
+        // time
+        const startString = document.getElementById('start-time').value; 
+        // e.g. "2023-09-12T21:00" from datetime-local
 
-      let invitees = [];
-      if (inviteType === 'invites') {
-        invitees = Array
-          .from(inviteesSelect.selectedOptions)
-          .map(opt => opt.value);
-      }
+        // Convert to a JS Date
+        const startDate = new Date(startString);
 
-      const ticketing = ticketingSelect.value;
-      const ticketPrice = (ticketing === 'Yes')
-        ? (document.getElementById('ticket-price').value || null)
-        : null;
-      const capacity = (ticketing === 'Yes')
-        ? (document.getElementById('capacity').value || null)
-        : null;
-      const eventDescription = document.getElementById('event-description').value || null;
+        // Convert to Firestore Timestamp
+        const startTimeTimestamp = Timestamp.fromDate(startDate);
 
-      try {
-        const eventData = {
-          eventName,
-          startTime,
-          endTime,
-          location,
-          eventType: finalEventType,
-          venueName,
-          inviteType,
-          invitees,
-          ticketing,
-          ticketPrice,
-          capacity,
-          eventDescription,
-          createdAt: new Date().toISOString(),
-        };
-        // Write to Firestore
-        await addDoc(collection(db, 'events'), eventData);
+        // Do the same for end-time
+        const endString = document.getElementById('end-time').value;
+        const endDate = new Date(endString);
+        const endTimeTimestamp = Timestamp.fromDate(endDate);
 
-        // Show "Success" message with a callback that resets the form
-        showAlert('Success!', 'Your event is now on the map.', () => {
-            window.location.href = '/dashboard.html';
+
+        const venueName = document.getElementById('venue-name').value || null;
+        const inviteType = inviteTypeSelect.value || null;
+
+        let invitees = [];
+        if (inviteType === 'invites') {
+            invitees = Array
+            .from(inviteesSelect.selectedOptions)
+            .map(opt => opt.value);
+        }
+
+        const ticketing = ticketingSelect.value;
+        const ticketPrice = (ticketing === 'Yes')
+            ? (document.getElementById('ticket-price').value || null)
+            : null;
+        const capacity = (ticketing === 'Yes')
+            ? (document.getElementById('capacity').value || null)
+            : null;
+        const eventDescription = document.getElementById('event-description').value || null;
+
+        const user = auth.currentUser;
+
+        try {
+            const eventData = {
+                eventName,
+                startTime: startTimeTimestamp,
+                endTime: endTimeTimestamp,
+                createdAt: Timestamp.now(),
+                latitude,
+                longitude,
+                eventType: finalEventType,
+                venueName,
+                inviteType,
+                invitees,
+                ticketing,
+                ticketPrice,
+                capacity,
+                eventDescription,
+                createdBy: user.uid
+            };
+            // Write to Firestore
+            await addDoc(collection(db, 'events'), eventData);
+
+            // Show "Success" message with a callback that resets the form
+            showAlert('Success!', 'Your event is now on the map.', () => {
+                window.location.href = '/dashboard.html';
+            });
+
+        } catch (error) {
+            console.error('Error creating event:', error);
+            showAlert('Error', error.message);
+        }
         });
-
-      } catch (error) {
-        console.error('Error creating event:', error);
-        showAlert('Error', error.message);
-      }
-    });
   }
 
   // If user clicks "No", just hide the overlay
@@ -179,6 +201,9 @@ export function initEventForm() {
   const placeholderText = document.getElementById('placeholder-text');
   const fileInput = document.getElementById('image-upload');
   const changeImageButton = document.querySelector('.change-image-btn');
+
+  // Initialize the Google Map + Autocomplete:
+  initCreateEventMap();
 
   function triggerFileInput() {
     if (fileInput) fileInput.click();
@@ -203,4 +228,47 @@ export function initEventForm() {
       }
     });
   }
+
+  function initCreateEventMap() {
+    const searchInput = document.getElementById('search-input');
+    const mapDiv = document.getElementById('map');
+    // If these don't exist, bail out
+    if (!searchInput || !mapDiv) return;
+  
+    const map = new google.maps.Map(mapDiv, {
+      zoom: 15,
+      center: { lat: 40.8068, lng: -73.9617 },
+      scrollwheel: true,
+    });
+  
+    const marker = new google.maps.Marker({ map });
+  
+    const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+      types: ['geocode'],
+    });
+    autocomplete.bindTo('bounds', map);
+  
+    autocomplete.addListener('place_changed', () => {
+      marker.setVisible(false);
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        window.alert('No details available');
+        return;
+      }
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17); // 17 is a good default zoom
+      }
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
+
+      // Here we set the lat/lng variables we declared above
+      latitude = place.geometry.location.lat();
+      longitude = place.geometry.location.lng();
+      
+    });
+  }
+  
 }

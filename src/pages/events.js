@@ -103,6 +103,10 @@ export function initEventForm() {
     if (confirmOverlay) confirmOverlay.style.display = 'flex';
   });
 
+  // -- (A) We'll store lat/long in these variables
+  let latitude = null;
+  let longitude = null;
+
   // If user clicks "Yes", create the event in Firestore
   if (confirmYes) {
     confirmYes.addEventListener('click', async function() {
@@ -158,7 +162,8 @@ export function initEventForm() {
                 startTime: startTimeTimestamp,
                 endTime: endTimeTimestamp,
                 createdAt: Timestamp.now(),
-                location,
+                latitude,
+                longitude,
                 eventType: finalEventType,
                 venueName,
                 inviteType,
@@ -197,6 +202,9 @@ export function initEventForm() {
   const fileInput = document.getElementById('image-upload');
   const changeImageButton = document.querySelector('.change-image-btn');
 
+  // Initialize the Google Map + Autocomplete:
+  initCreateEventMap();
+
   function triggerFileInput() {
     if (fileInput) fileInput.click();
   }
@@ -220,4 +228,47 @@ export function initEventForm() {
       }
     });
   }
+
+  function initCreateEventMap() {
+    const searchInput = document.getElementById('search-input');
+    const mapDiv = document.getElementById('map');
+    // If these don't exist, bail out
+    if (!searchInput || !mapDiv) return;
+  
+    const map = new google.maps.Map(mapDiv, {
+      zoom: 15,
+      center: { lat: 40.8068, lng: -73.9617 },
+      scrollwheel: true,
+    });
+  
+    const marker = new google.maps.Marker({ map });
+  
+    const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+      types: ['geocode'],
+    });
+    autocomplete.bindTo('bounds', map);
+  
+    autocomplete.addListener('place_changed', () => {
+      marker.setVisible(false);
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
+        window.alert('No details available');
+        return;
+      }
+      if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+      } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17); // 17 is a good default zoom
+      }
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
+
+      // Here we set the lat/lng variables we declared above
+      latitude = place.geometry.location.lat();
+      longitude = place.geometry.location.lng();
+      
+    });
+  }
+  
 }
