@@ -10,11 +10,11 @@
 </head>
 <body class="auth-loading">
 
-    <!-- Navbar -->
+    <!-- Shared Navbar Snippet for Logged Out Pages -->
     <nav class="navbar" id="main-navbar">
         <div class="navbar__container">
             <!-- Logo -->
-            <a href="dashboard.html" class="navbar__logo"><h1>MOVES</h1></a>
+            <a href="index.html" class="navbar__logo"><h1>MOVES</h1></a>
             
             <!-- Hamburger Toggle -->
             <div class="navbar__toggle" id="mobile-menu">
@@ -22,36 +22,29 @@
                 <span class="bar"></span>
                 <span class="bar"></span>
             </div>
-
+    
             <!-- Menu Items -->
             <ul class="navbar__menu">
-                <li class="navbar__btn" data-page="dashboard.html">
-                    <a href="dashboard.html" class="button">Home</a>
+                <!-- Home (visible for both logged in / logged out) -->
+                <li class="navbar__btn" data-page="index.html">
+                <a href="index.html" class="button">Home</a>
                 </li>
-                <li class="navbar__btn" data-page="about-logged-in.html">
-                    <a href="about-logged-in.html" class="button">About Us</a>
+                
+                <li class="navbar__btn" data-page="about.html">
+                <a href="about.html" class="button">About Us</a>
                 </li>
-                <li class="navbar__btn" data-page="createevent.html">
-                    <a href="createevent.html" class="button">Create Event</a>
+                
+                <li class="navbar__btn">
+                <a href="login.html" class="button">Log In</a>
                 </li>
-                <li class="navbar__btn" data-page="myevents.html">
-                    <a href="myevents.html" class="button">My Events</a>
+
+                <li class="navbar__btn">
+                <a href="signup.html" class="button">Sign Up</a>
                 </li>
+        
+                <!-- Contact Us (visible for both) -->
                 <li class="navbar__btn" data-page="contact.html">
-                    <a href="contact.html" class="button">Contact Us</a>
-                </li>
-                <!-- User Dropdown -->
-                <li class="navbar__user">
-                    <div class="user-dropdown" data-nav="account">
-                        <span class="username">
-                            <span id="nav-displayname"></span>
-                            <i class='bx bxs-user-circle'></i>
-                        </span>
-                        <div class="dropdown-content">
-                            <a href="./account-settings.html">Account Settings</a>
-                            <a href="./" id="logout-link">Log Out</a>
-                        </div>
-                    </div>
+                <a href="contact.html" class="button">Contact Us</a>
                 </li>
             </ul>
         </div>

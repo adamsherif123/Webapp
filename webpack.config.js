@@ -71,6 +71,10 @@ module.exports = {
             template: './src/contact.html',
             filename: 'contact.html',
         }),
+        new HtmlWebpackPlugin({
+            template: './src/contact-logged-in.html',
+            filename: 'contact-logged-in.html',
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {
@@ -89,7 +93,8 @@ module.exports = {
                             '**/myevents.html',
                             '**/about.html',
                             '**/account-settings.html',
-                            '**/contact.html'
+                            '**/contact.html',
+                            '**/contact-logged-in.html'
                         ],
                     },
                 },
