@@ -954,7 +954,25 @@ body {
    max-height: 500px;
  }
 
+
  /* Dashboard */
+
+ /* A flex container for the small icon + the event name */
+.event-card-header {
+   display: flex;
+   align-items: center;
+   gap: 12px; /* space between the icon and the text */
+   margin-bottom: 10px; /* some spacing after the header */
+ }
+ 
+ /* The small icon */
+ .event-icon {
+   width: 50px;      /* or 40px, 60px, etc. */
+   height: 50px;
+   border-radius: 8px; /* or 50% for a circle */
+   object-fit: cover;  /* crop image if aspect ratio is different */
+ }
+ 
  .dashboard-container {
    width: 90%;          /* Take up most of the page width */
    max-width: 1200px;   /* Optional: limit max width for large screens */

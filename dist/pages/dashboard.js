@@ -8,10 +8,12 @@ import { showAlert } from '../utils/alerts.js';
 // Example data if you want to keep them
 const ongoingEvents = [
   {
-    name: "Late Summer Bash",
+    // NOTICE: no Firestore ID for these sample events,
+    // so we'll generate a fallback ID in createEventCard().
+    eventName: "Late Summer Bash",
     eventType: "Party",
-    venue: "Rooftop Lounge",
-    address: "456 Skyline Dr",
+    venueName: "Rooftop Lounge",
+    location: "456 Skyline Dr",
     startTime: "2023-08-25 18:00",
     endTime: "2023-08-25 23:00",
     totalRSVP: 75,
@@ -23,10 +25,10 @@ const ongoingEvents = [
 
 const upcomingEvents = [
   {
-    name: "Campus Kickoff",
+    eventName: "Campus Kickoff",
     eventType: "College Greek Life Party",
-    venue: "Alpha Beta House",
-    address: "University District",
+    venueName: "Alpha Beta House",
+    location: "University District",
     startTime: "2023-09-01 20:00",
     endTime: "2023-09-02 02:00",
     totalRSVP: 40,
@@ -42,95 +44,95 @@ export function initDashboard() {
   document.getElementById('total-rsvps').innerText   = "placeholder";
   document.getElementById('followers-count').innerText = "placeholder";
 
-  // 2) Start with "Loading..." or "No events yet" in ongoing
+  // Show "Loading..." initially for ongoing events
   const ongoingList = document.getElementById('ongoing-events-list');
   ongoingList.innerHTML = `<p>Loading your ongoing events...</p>`;
 
-  // 2) Also listen for user changes (login/logout)
+  // Also handle auth state changes
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
       // If user logs out or there's no user, set it to 0 or hide it
       document.getElementById('total-events').innerText = "0";
-    } else {
-      fetchRealTotalEvents(user.uid);
+
+      // Show “no ongoing events”
+      ongoingList.innerHTML = `<p>No ongoing events at the moment. 
+        <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
+      // Could also handle upcoming events similarly
+      return;
     }
 
-    if (!user) {
-        // Not logged in => no ongoing events
-        ongoingList.innerHTML = `<p>No ongoing events at the moment. 
-          <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
-        return;
-
-        // NOTE: This return is unreachable, but leaving it as in Code #1:
-        upcomingList.innerHTML = `<p>You have no upcoming events. 
-          <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
-        return;
-    }
+    // We have a user => fetch real total events
+    fetchRealTotalEvents(user.uid);
 
     try {
-        // (A) Query all events created by this user
-        const q = query(
-          collection(db, 'events'),
-          where('createdBy', '==', user.uid)
-        );
-        const snapshot = await getDocs(q);
+      // (A) Query all events created by this user
+      const q = query(
+        collection(db, 'events'),
+        where('createdBy', '==', user.uid)
+      );
+      const snapshot = await getDocs(q);
 
-        // (B) Convert doc data to array
-        const allUserEvents = [];
-        snapshot.forEach(docSnap => {
-          allUserEvents.push(docSnap.data());
+      // (B) Convert doc data to array, **including docSnap.id**:
+      const allUserEvents = [];
+      snapshot.forEach(docSnap => {
+        allUserEvents.push({
+          id: docSnap.id,     // store the Firestore doc ID
+          ...docSnap.data()
         });
+      });
 
-        // (C) Filter to find "ongoing" => startTime <= now <= endTime
-        const now = new Date();
-        const ongoingEvents = allUserEvents.filter(evt => {
-            let start;
-            let end;
+      // (C) Filter to find "ongoing" => startTime <= now <= endTime
+      const now = new Date();
+      const ongoingEvents = allUserEvents.filter(evt => {
+        let start;
+        let end;
 
-            // 1) Check if `evt.startTime` is a Firestore Timestamp
-            if (evt.startTime && typeof evt.startTime.toDate === 'function') {
-                // Firestore Timestamp => convert
-                start = evt.startTime.toDate();
-            } else {
-                // Probably a string => parse
-                start = new Date(evt.startTime);
-            }
+        // Convert Firestore Timestamp or parse as Date
+        if (evt.startTime && typeof evt.startTime.toDate === 'function') {
+          start = evt.startTime.toDate();
+        } else {
+          start = new Date(evt.startTime);
+        }
 
-            if (evt.endTime && typeof evt.endTime.toDate === 'function') {
-                end = evt.endTime.toDate();
-            } else {
-                end = new Date(evt.endTime);
-            }
+        if (evt.endTime && typeof evt.endTime.toDate === 'function') {
+          end = evt.endTime.toDate();
+        } else {
+          end = new Date(evt.endTime);
+        }
 
-            return start <= now && now <= end;
-        });
+        return start <= now && now <= end;
+      });
 
-        // (C) Filter to find "upcoming" => now < startTime
-        const upcomingEvents = allUserEvents.filter(evt => {
-            let start;
-            if (evt.startTime && typeof evt.startTime.toDate === 'function') {
-                start = evt.startTime.toDate();
-            } else {
-                start = new Date(evt.startTime);
-            }
-            return now < start;
-        });
+      // (C) Filter to find "upcoming" => now < startTime
+      const upcomingEvents = allUserEvents.filter(evt => {
+        let start;
+        if (evt.startTime && typeof evt.startTime.toDate === 'function') {
+          start = evt.startTime.toDate();
+        } else {
+          start = new Date(evt.startTime);
+        }
+        return now < start;
+      });
 
-        // (D) Render the ongoing events or show a "none" message
-        renderOngoingEvents(ongoingEvents);
+      // (D) Render the ongoing events
+      renderOngoingEvents(ongoingEvents);
 
-        // (D) Render the upcoming events or show a "none" message
-        renderUpcomingEvents(upcomingEvents);
+      // (D) Render the upcoming events
+      renderUpcomingEvents(upcomingEvents);
 
     } catch (error) {
-        console.error('Error fetching user events:', error);
-        ongoingList.innerHTML = `<p>Error loading events. Please try again later.</p>`;
+      console.error('Error fetching user events:', error);
+      ongoingList.innerHTML = `<p>Error loading events. Please try again later.</p>`;
+      // If you have an #upcoming-events-list, also handle it there:
+      const upcomingList = document.getElementById('upcoming-events-list');
+      if (upcomingList) {
         upcomingList.innerHTML = `<p>Error loading events. Please try again later.</p>`;
+      }
     }
 
   });
 
-  // 3) Populate Ongoing & Upcoming events
+  // 3) Populate Ongoing & Upcoming from your sample arrays, if you want:
   populateEvents();
 }
 
@@ -148,7 +150,6 @@ async function fetchRealTotalEvents(userUid) {
     document.getElementById('total-events').innerText = totalEvents;
   } catch (error) {
     console.error('Error fetching user events:', error);
-    // If error, we can show "N/A" or "Error"
     document.getElementById('total-events').innerText = "N/A";
   }
 }
@@ -157,38 +158,38 @@ async function fetchRealTotalEvents(userUid) {
  * Renders an array of "ongoing" events into #ongoing-events-list
  */
 function renderOngoingEvents(ongoingEvents) {
-    const ongoingList = document.getElementById('ongoing-events-list');
-    if (!ongoingEvents || ongoingEvents.length === 0) {
-      ongoingList.innerHTML = `<p>No ongoing events at the moment. 
-        <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
-      return;
-    }
-  
-    // Clear existing
-    ongoingList.innerHTML = '';
-    // Render each ongoing event
-    ongoingEvents.forEach(evt => {
-      ongoingList.appendChild(createEventCard(evt, true));
-    });
+  const ongoingList = document.getElementById('ongoing-events-list');
+  if (!ongoingEvents || ongoingEvents.length === 0) {
+    ongoingList.innerHTML = `<p>No ongoing events at the moment. 
+      <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
+    return;
+  }
+
+  // Clear existing
+  ongoingList.innerHTML = '';
+  // Render each ongoing event
+  ongoingEvents.forEach(evt => {
+    ongoingList.appendChild(createEventCard(evt, true));
+  });
 }
 
-// /**
-//  * Renders an array of "upcoming" events into #ongoing-events-list
-//  */
+/**
+ * Renders an array of "upcoming" events into #upcoming-events-list
+ */
 function renderUpcomingEvents(upcomingEvents) {
-    const upcomingList = document.getElementById('upcoming-events-list');
-    if (!upcomingEvents || upcomingEvents.length === 0) {
-        upcomingList.innerHTML = `<p>You have no upcoming events. 
-        <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
-      return;
-    }
-  
-    // Clear existing
-    upcomingList.innerHTML = '';
-    // Render each ongoing event
-    upcomingEvents.forEach(evt => {
-        upcomingList.appendChild(createEventCard(evt, false));
-    });
+  const upcomingList = document.getElementById('upcoming-events-list');
+  if (!upcomingEvents || upcomingEvents.length === 0) {
+    upcomingList.innerHTML = `<p>You have no upcoming events. 
+      <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
+    return;
+  }
+
+  // Clear existing
+  upcomingList.innerHTML = '';
+  // Render each event
+  upcomingEvents.forEach(evt => {
+    upcomingList.appendChild(createEventCard(evt, false));
+  });
 }
 
 /**
@@ -216,95 +217,128 @@ function populateEvents() {
   }
 }
 
+/**
+ * Safely format a Timestamp object or fallback to a string parse
+ */
 function formatTimestampOrString(value) {
-    if (!value) return "N/A";
-  
-    // If it's a Firestore Timestamp object, use .toDate().toLocaleString()
-    if (typeof value.toDate === 'function') {
-      const dateObj = value.toDate();
-      return dateObj.toLocaleString(); 
-    }
-  
-    // Otherwise, assume it's a string parseable by Date
-    // (like "2023-09-12T21:00" from <input type="datetime-local">)
-    const parsed = new Date(value);
-    if (isNaN(parsed.getTime())) {
-      // If it failed to parse, just return the raw string
-      return value;
-    } else {
-      return parsed.toLocaleString();
-    }
+  if (!value) return "N/A";
+
+  // If it's a Firestore Timestamp object, use .toDate().toLocaleString()
+  if (typeof value.toDate === 'function') {
+    const dateObj = value.toDate();
+    return dateObj.toLocaleString();
+  }
+
+  // Otherwise, assume it's a string parseable by Date
+  const parsed = new Date(value);
+  return isNaN(parsed.getTime()) ? value : parsed.toLocaleString();
 }
 
 /**
- * Create a dynamic event card. Now includes a thumbnail if `event.imageUrl` is present.
+ * Build an event card, using Firestore doc ID for the address element ID.
  */
 function createEventCard(event, isOngoing) {
-    const card = document.createElement('div');
-    card.classList.add('dynamic-event-card');
+  const card = document.createElement('div');
+  card.classList.add('dynamic-event-card');
 
-    // --- ADDED: If there's an imageUrl, show a small thumbnail
-    let imageThumbnail = '';
-    if (event.imageUrl) {
-      imageThumbnail = `
-        <div class="event-card-image">
-          <img 
-            src="${event.imageUrl}" 
-            alt="Event Image" 
-            class="event-image-thumbnail"
-          />
-        </div>
-      `;
-    }
-    // ---
+  // Build small “header” with optional image
+  let imageTag = '';
+  if (event.imageUrl) {
+    imageTag = `<img src="${event.imageUrl}" alt="Event Icon" class="event-icon" />`;
+  }
 
-    // First container: event info
-    let infoContent = `
-        <h4>Details</h4>
-        <a href="edit-event.html" class="hyperlink">Edit Event</a> 
+  const headerHTML = `
+    <div class="event-card-header">
+      ${imageTag}
+      <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
+    </div>
+  `;
+
+  // The “Details” section
+  let infoContent = `
+    <h4>Details</h4>
+    <a href="edit-event.html" class="hyperlink">Edit Event</a>
+  `;
+  if (event.venueName) {
+    infoContent += `<p><strong>Venue:</strong> ${event.venueName}</p>`;
+  }
+
+  // Use the doc ID if present; else generate a fallback from eventName
+  const uniqueId = event.id 
+    ? event.id
+    : `sample-${(event.eventName || 'untitled').replace(/\W+/g, '-')}`;
+
+  infoContent += `
+    <p id="address-${uniqueId}">
+      <strong>Address:</strong> Loading...
+    </p>
+    <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
+    <p><strong>End Time:</strong>   ${formatTimestampOrString(event.endTime)}</p>
+  `;
+
+  // Stats (placeholder)
+  let statsContent = `
+    <h4>Stats</h4>
+    <p><strong>Total RSVPs:</strong> ***PLACEHOLDER***</p>
+    <p><strong>Gender (RSVPs):</strong> ***PLACEHOLDER***</p>
+  `;
+  // If ongoing, we show more stats
+  if (isOngoing) {
+    statsContent += `
+      <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
+      <p><strong>Gender (At Event):</strong> ***PLACEHOLDER***</p>
     `;
-    if (event.venueName) {
-      infoContent += `<p><strong>Venue:</strong> ${event.venueName}</p>`;
-    }
-  
-    infoContent += `
-      <p><strong>Address:</strong> ${event.location}</p>
-      <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
-      <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
-      <p><strong>Access:</strong> ${event.inviteType}</p>
-    `;
-  
-    if (event.ticketing == 'Yes') {
-      infoContent += `
-        <p><strong>Ticket Price:</strong> $${event.ticketPrice}</p>
-        <p><strong>Capacity:</strong> ${event.capacity}</p>
-      `;
-    }
-  
-    // Second container: stats (placeholders or real stats)
-    let statsContent = `
-      <p><strong>Total RSVPs:</strong> ***PLACEHOLDER***</p>
-      <p><strong>Gender (RSVPs):</strong> ***PLACEHOLDER***</p>
-    `;
-    if (isOngoing) {
-      statsContent += `
-        <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
-        <p><strong>Gender (At Event):</strong> ***PLACEHOLDER***</p>
-      `;
-    }
-  
-    // Build final HTML with three sections: optional image, event info, event stats
-    card.innerHTML = `
-      ${imageThumbnail}
-      <div class="event-info">
-        <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
-        ${infoContent}
-      </div>
-      <div class="event-stats">
-        <h4>Stats</h4>
-        ${statsContent}
-      </div>
-    `;
-  
-    return card;
+  }
+
+  // Combine everything
+  card.innerHTML = `
+    ${headerHTML}
+    <div class="event-info">
+      ${infoContent}
+    </div>
+    <div class="event-stats">
+      ${statsContent}
+    </div>
+  `;
+
+  // Now handle “Address:” logic
+  const addressEl = card.querySelector(`#address-${uniqueId}`);
+
+  // 1) If Firestore has a string `event.location`, just show it
+  if (event.location) {
+    addressEl.innerHTML = `<strong>Address:</strong> ${event.location}`;
+  }
+  // 2) Otherwise, if we have lat/lng => reverse geocode
+  else if (event.latitude && event.longitude) {
+    reverseGeocode(event.latitude, event.longitude)
+      .then(formattedAddr => {
+        addressEl.innerHTML = `<strong>Address:</strong> ${formattedAddr}`;
+      })
+      .catch(err => {
+        addressEl.innerHTML = `<strong>Address:</strong> (Could not fetch)`;
+        console.error('Reverse geocode error:', err);
+      });
+  }
+  // 3) Fallback
+  else {
+    addressEl.innerHTML = `<strong>Address:</strong> Not available`;
+  }
+
+  return card;
+}
+
+/**
+ * Reverse‐geocode lat/lng into a string address (uses Google Maps JavaScript API).
+ */
+function reverseGeocode(lat, lng) {
+  return new Promise((resolve, reject) => {
+    const geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+      if (status === 'OK' && results[0]) {
+        resolve(results[0].formatted_address);
+      } else {
+        reject(status);
+      }
+    });
+  });
 }
