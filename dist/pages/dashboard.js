@@ -46,7 +46,6 @@ export function initDashboard() {
   const ongoingList = document.getElementById('ongoing-events-list');
   ongoingList.innerHTML = `<p>Loading your ongoing events...</p>`;
 
-
   // 2) Also listen for user changes (login/logout)
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -62,6 +61,7 @@ export function initDashboard() {
           <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
         return;
 
+        // NOTE: This return is unreachable, but leaving it as in Code #1:
         upcomingList.innerHTML = `<p>You have no upcoming events. 
           <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
         return;
@@ -70,15 +70,15 @@ export function initDashboard() {
     try {
         // (A) Query all events created by this user
         const q = query(
-        collection(db, 'events'),
-        where('createdBy', '==', user.uid)
+          collection(db, 'events'),
+          where('createdBy', '==', user.uid)
         );
         const snapshot = await getDocs(q);
 
         // (B) Convert doc data to array
         const allUserEvents = [];
         snapshot.forEach(docSnap => {
-        allUserEvents.push(docSnap.data());
+          allUserEvents.push(docSnap.data());
         });
 
         // (C) Filter to find "ongoing" => startTime <= now <= endTime
@@ -108,13 +108,9 @@ export function initDashboard() {
         // (C) Filter to find "upcoming" => now < startTime
         const upcomingEvents = allUserEvents.filter(evt => {
             let start;
-
-            // 1) Check if `evt.startTime` is a Firestore Timestamp
             if (evt.startTime && typeof evt.startTime.toDate === 'function') {
-                // Firestore Timestamp => convert
                 start = evt.startTime.toDate();
             } else {
-                // Probably a string => parse
                 start = new Date(evt.startTime);
             }
             return now < start;
@@ -240,10 +236,28 @@ function formatTimestampOrString(value) {
     }
 }
 
+/**
+ * Create a dynamic event card. Now includes a thumbnail if `event.imageUrl` is present.
+ */
 function createEventCard(event, isOngoing) {
     const card = document.createElement('div');
     card.classList.add('dynamic-event-card');
-  
+
+    // --- ADDED: If there's an imageUrl, show a small thumbnail
+    let imageThumbnail = '';
+    if (event.imageUrl) {
+      imageThumbnail = `
+        <div class="event-card-image">
+          <img 
+            src="${event.imageUrl}" 
+            alt="Event Image" 
+            class="event-image-thumbnail"
+          />
+        </div>
+      `;
+    }
+    // ---
+
     // First container: event info
     let infoContent = `
         <h4>Details</h4>
@@ -279,8 +293,9 @@ function createEventCard(event, isOngoing) {
       `;
     }
   
-    // Build final HTML with two sections
+    // Build final HTML with three sections: optional image, event info, event stats
     card.innerHTML = `
+      ${imageThumbnail}
       <div class="event-info">
         <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
         ${infoContent}
@@ -292,5 +307,4 @@ function createEventCard(event, isOngoing) {
     `;
   
     return card;
-  }
-  
+}

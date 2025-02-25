@@ -1,7 +1,10 @@
 // src/pages/events.js
 
-import { auth, db } from '../firebase.js';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+// 1) We now import `storage` and the storage functions:
+import { auth, db, storage } from '../firebase.js';
+import { addDoc, collection, Timestamp, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
 import { showAlert } from '../utils/alerts.js';
 
 // We'll import jQuery and select2
@@ -13,7 +16,11 @@ export function initEventForm() {
   const eventForm = document.getElementById('event-form');
   if (!eventForm) return;
 
+  // (A) Track whether a valid address has been selected
   let validPlaceSelected = false;
+
+  // (B) We'll store the user-selected image file here for upload
+  let selectedFile = null;
 
   // 1) If event type = "Other", show additional input
   const eventTypeSelect = document.getElementById('event-type');
@@ -102,22 +109,30 @@ export function initEventForm() {
   // On form submit, show the confirmation overlay
   eventForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    // We ensure the user selected a valid place:
     if (!validPlaceSelected) {
-        showAlert('Invalid Address','Please select a valid location from the dropdown');
-        return; // Stop form submission
+      showAlert('Invalid Address', 'Please select a valid location from the dropdown');
+      return; // Stop form submission
     }
     if (confirmOverlay) confirmOverlay.style.display = 'flex';
   });
 
-  // -- (A) We'll store lat/long in these variables
+  // -- We'll store lat/long in these variables
   let latitude = null;
   let longitude = null;
 
   // If user clicks "Yes", create the event in Firestore
   if (confirmYes) {
     confirmYes.addEventListener('click', async function() {
-        if (confirmOverlay) confirmOverlay.style.display = 'none';
+      if (confirmOverlay) confirmOverlay.style.display = 'none';
 
+      const user = auth.currentUser;
+      if (!user) {
+        showAlert('Error', 'No authenticated user found!');
+        return;
+      }
+
+      try {
         // Gather form data
         const eventName = document.getElementById('event-name').value;
         const location  = document.getElementById('search-input').value;
@@ -126,73 +141,77 @@ export function initEventForm() {
         const finalEventType = (selectedType === 'Other') ? otherVal : selectedType;
 
         // time
-        const startString = document.getElementById('start-time').value; 
-        // e.g. "2023-09-12T21:00" from datetime-local
-
-        // Convert to a JS Date
+        const startString = document.getElementById('start-time').value;
         const startDate = new Date(startString);
-
-        // Convert to Firestore Timestamp
         const startTimeTimestamp = Timestamp.fromDate(startDate);
 
-        // Do the same for end-time
         const endString = document.getElementById('end-time').value;
         const endDate = new Date(endString);
         const endTimeTimestamp = Timestamp.fromDate(endDate);
-
 
         const venueName = document.getElementById('venue-name').value || null;
         const inviteType = inviteTypeSelect.value || null;
 
         let invitees = [];
         if (inviteType === 'invites') {
-            invitees = Array
+          invitees = Array
             .from(inviteesSelect.selectedOptions)
             .map(opt => opt.value);
         }
 
         const ticketing = ticketingSelect.value;
         const ticketPrice = (ticketing === 'Yes')
-            ? (document.getElementById('ticket-price').value || null)
-            : null;
+          ? (document.getElementById('ticket-price').value || null)
+          : null;
         const capacity = (ticketing === 'Yes')
-            ? (document.getElementById('capacity').value || null)
-            : null;
+          ? (document.getElementById('capacity').value || null)
+          : null;
         const eventDescription = document.getElementById('event-description').value || null;
 
-        const user = auth.currentUser;
+        // 1) Create the event document (no imageUrl yet)
+        const eventData = {
+          eventName,
+          startTime: startTimeTimestamp,
+          endTime: endTimeTimestamp,
+          createdAt: Timestamp.now(),
+          latitude,
+          longitude,
+          eventType: finalEventType,
+          venueName,
+          inviteType,
+          invitees,
+          ticketing,
+          ticketPrice,
+          capacity,
+          eventDescription,
+          createdBy: user.uid
+        };
 
-        try {
-            const eventData = {
-                eventName,
-                startTime: startTimeTimestamp,
-                endTime: endTimeTimestamp,
-                createdAt: Timestamp.now(),
-                latitude,
-                longitude,
-                eventType: finalEventType,
-                venueName,
-                inviteType,
-                invitees,
-                ticketing,
-                ticketPrice,
-                capacity,
-                eventDescription,
-                createdBy: user.uid
-            };
-            // Write to Firestore
-            await addDoc(collection(db, 'events'), eventData);
+        const docRef = await addDoc(collection(db, 'events'), eventData);
 
-            // Show "Success" message with a callback that resets the form
-            showAlert('Success!', 'Your event is now on the map.', () => {
-                window.location.href = '/dashboard.html';
-            });
+        // 2) If an image was selected, upload it to Firebase Storage
+        if (selectedFile) {
+          const storageRef = ref(storage, `eventImages/${user.uid}/${docRef.id}.jpg`);
+          await uploadBytes(storageRef, selectedFile);
+          console.log('Image uploaded successfully');
 
-        } catch (error) {
-            console.error('Error creating event:', error);
-            showAlert('Error', error.message);
+          // 3) Once uploaded, get the download URL and update Firestore doc
+          const downloadURL = await getDownloadURL(storageRef);
+          await updateDoc(docRef, {
+            imageUrl: downloadURL
+          });
         }
+
+        // 4) Show success
+        showAlert('Success!', 'Your event is now on the map.', () => {
+          window.location.href = '/dashboard.html';
         });
+
+      } catch (error) {
+        console.error('Error creating event:', error);
+        showAlert('Error', error.message);
+      }
+    });
   }
 
   // If user clicks "No", just hide the overlay
@@ -222,15 +241,19 @@ export function initEventForm() {
     changeImageButton.addEventListener('click', triggerFileInput);
   }
 
+  // UPDATED: We set `selectedFile` for upload AND do the preview
   if (fileInput) {
     fileInput.addEventListener('change', function(event) {
       if (event.target.files && event.target.files[0]) {
+        selectedFile = event.target.files[0];
+
+        // Preview the image in the side panel
         const reader = new FileReader();
         reader.onload = function(e) {
           partyImageDiv.style.background = `url('${e.target.result}') center center / cover no-repeat`;
           placeholderText.style.display = 'none';
         };
-        reader.readAsDataURL(event.target.files[0]);
+        reader.readAsDataURL(selectedFile);
       }
     });
   }
@@ -240,49 +263,50 @@ export function initEventForm() {
     const mapDiv = document.getElementById('map');
     // If these don't exist, bail out
     if (!searchInput || !mapDiv) return;
-  
+
     const map = new google.maps.Map(mapDiv, {
       zoom: 15,
       center: { lat: 40.8068, lng: -73.9617 },
       scrollwheel: true,
     });
-  
+
     const marker = new google.maps.Marker({ map });
-  
+
     const autocomplete = new google.maps.places.Autocomplete(searchInput, {
+      // You can add options here, e.g. { types: ['geocode'] }
     });
     autocomplete.bindTo('bounds', map);
 
     // (A) Listen for "place_changed"
     autocomplete.addListener('place_changed', () => {
-        const place = autocomplete.getPlace();
-        if (!place.geometry) {
+      const place = autocomplete.getPlace();
+      if (!place.geometry) {
         // If no geometry, invalid place
         validPlaceSelected = false;
         showAlert('Invalid Address','Please select a valid location from the dropdown');
         return;
-        }
+      }
 
-        // We have a valid place:
-        validPlaceSelected = true;
+      // We have a valid place:
+      validPlaceSelected = true;
 
-        if (place.geometry.viewport) {
+      if (place.geometry.viewport) {
         map.fitBounds(place.geometry.viewport);
-        } else {
+      } else {
         map.setCenter(place.geometry.location);
         map.setZoom(17);
-        }
-        marker.setPosition(place.geometry.location);
-        marker.setVisible(true);
+      }
+      marker.setPosition(place.geometry.location);
+      marker.setVisible(true);
 
-        // Store lat/lng as needed
-        latitude = place.geometry.location.lat();
-        longitude = place.geometry.location.lng();
+      // Store lat/lng
+      latitude = place.geometry.location.lat();
+      longitude = place.geometry.location.lng();
     });
 
     // (B) If user types after selecting a place, reset validPlaceSelected
     searchInput.addEventListener('input', () => {
-        validPlaceSelected = false;
+      validPlaceSelected = false;
     });
   }
 }

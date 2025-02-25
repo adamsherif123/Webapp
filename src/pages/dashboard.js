@@ -46,7 +46,6 @@ export function initDashboard() {
   const ongoingList = document.getElementById('ongoing-events-list');
   ongoingList.innerHTML = `<p>Loading your ongoing events...</p>`;
 
-
   // 2) Also listen for user changes (login/logout)
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
@@ -62,6 +61,7 @@ export function initDashboard() {
           <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
         return;
 
+        // NOTE: This return is unreachable, but leaving it as in Code #1:
         upcomingList.innerHTML = `<p>You have no upcoming events. 
           <a href="createevent.html" class="hyperlink">Create one!</a></p>`;
         return;
@@ -70,15 +70,15 @@ export function initDashboard() {
     try {
         // (A) Query all events created by this user
         const q = query(
-        collection(db, 'events'),
-        where('createdBy', '==', user.uid)
+          collection(db, 'events'),
+          where('createdBy', '==', user.uid)
         );
         const snapshot = await getDocs(q);
 
         // (B) Convert doc data to array
         const allUserEvents = [];
         snapshot.forEach(docSnap => {
-        allUserEvents.push(docSnap.data());
+          allUserEvents.push(docSnap.data());
         });
 
         // (C) Filter to find "ongoing" => startTime <= now <= endTime
@@ -108,13 +108,9 @@ export function initDashboard() {
         // (C) Filter to find "upcoming" => now < startTime
         const upcomingEvents = allUserEvents.filter(evt => {
             let start;
-
-            // 1) Check if `evt.startTime` is a Firestore Timestamp
             if (evt.startTime && typeof evt.startTime.toDate === 'function') {
-                // Firestore Timestamp => convert
                 start = evt.startTime.toDate();
             } else {
-                // Probably a string => parse
                 start = new Date(evt.startTime);
             }
             return now < start;
@@ -240,57 +236,81 @@ function formatTimestampOrString(value) {
     }
 }
 
+/**
+ * Create a dynamic event card. Now includes a thumbnail if `event.imageUrl` is present.
+ */
 function createEventCard(event, isOngoing) {
-    const card = document.createElement('div');
-    card.classList.add('dynamic-event-card');
-  
-    // First container: event info
-    let infoContent = `
-        <h4>Details</h4>
-        <a href="edit-event.html" class="hyperlink">Edit Event</a> 
+  const card = document.createElement('div');
+  card.classList.add('dynamic-event-card');
+
+  // If there's an imageUrl, build a small <img> tag
+  let imageTag = '';
+  if (event.imageUrl) {
+    imageTag = `
+      <img 
+        src="${event.imageUrl}" 
+        alt="Event Icon" 
+        class="event-icon"
+      />
     `;
-    if (event.venueName) {
-      infoContent += `<p><strong>Venue:</strong> ${event.venueName}</p>`;
-    }
-  
-    infoContent += `
-      <p><strong>Address:</strong> ${event.location}</p>
-      <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
-      <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
-      <p><strong>Access:</strong> ${event.inviteType}</p>
-    `;
-  
-    if (event.ticketing == 'Yes') {
-      infoContent += `
-        <p><strong>Ticket Price:</strong> $${event.ticketPrice}</p>
-        <p><strong>Capacity:</strong> ${event.capacity}</p>
-      `;
-    }
-  
-    // Second container: stats (placeholders or real stats)
-    let statsContent = `
-      <p><strong>Total RSVPs:</strong> ***PLACEHOLDER***</p>
-      <p><strong>Gender (RSVPs):</strong> ***PLACEHOLDER***</p>
-    `;
-    if (isOngoing) {
-      statsContent += `
-        <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
-        <p><strong>Gender (At Event):</strong> ***PLACEHOLDER***</p>
-      `;
-    }
-  
-    // Build final HTML with two sections
-    card.innerHTML = `
-      <div class="event-info">
-        <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
-        ${infoContent}
-      </div>
-      <div class="event-stats">
-        <h4>Stats</h4>
-        ${statsContent}
-      </div>
-    `;
-  
-    return card;
   }
-  
+
+  // Build a small "header" that shows the icon + event name inline
+  const headerHTML = `
+    <div class="event-card-header">
+      ${imageTag}
+      <h3>${event.eventName} 
+        - <span class="event-type">${event.eventType}</span>
+      </h3>
+    </div>
+  `;
+
+  // First container: event info
+  let infoContent = `
+    <h4>Details</h4>
+    <a href="edit-event.html" class="hyperlink">Edit Event</a> 
+  `;
+  if (event.venueName) {
+    infoContent += `<p><strong>Venue:</strong> ${event.venueName}</p>`;
+  }
+
+  infoContent += `
+    <p><strong>Address:</strong> ${event.location}</p>
+    <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
+    <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
+    <p><strong>Access:</strong> ${event.inviteType}</p>
+  `;
+
+  if (event.ticketing === 'Yes') {
+    infoContent += `
+      <p><strong>Ticket Price:</strong> $${event.ticketPrice}</p>
+      <p><strong>Capacity:</strong> ${event.capacity}</p>
+    `;
+  }
+
+  // Second container: stats (placeholders or real stats)
+  let statsContent = `
+    <p><strong>Total RSVPs:</strong> ***PLACEHOLDER***</p>
+    <p><strong>Gender (RSVPs):</strong> ***PLACEHOLDER***</p>
+  `;
+  if (isOngoing) {
+    statsContent += `
+      <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
+      <p><strong>Gender (At Event):</strong> ***PLACEHOLDER***</p>
+    `;
+  }
+
+  // Put it all together
+  card.innerHTML = `
+    ${headerHTML}              <!-- The new small "icon + name" header -->
+    <div class="event-info">
+      ${infoContent}
+    </div>
+    <div class="event-stats">
+      <h4>Stats</h4>
+      ${statsContent}
+    </div>
+  `;
+
+  return card;
+}
