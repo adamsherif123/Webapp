@@ -4,84 +4,85 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up Page</title>
+  <!-- Your existing CSS links -->
   <link rel="stylesheet" href="styles.css" />
   <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css2?family=Kumbh+Sans:wght@100..900&display=swap" rel="stylesheet">
 </head>
-<body class="form-page">
-    <div>
+<body>
+
+<!-- Main wrapper to hold both columns -->
+<div class="signup-container">
+
+  <!-- LEFT COLUMN -->
+  <div class="left-col">
+    <!-- Place your own logo here -->
+    <div class="logo-container">
+      <h1 style="color: white; font-size: 2rem;">My Logo</h1>
+    </div>
+  </div>
+  
+  <!-- RIGHT COLUMN -->
+  <div class="right-col">
     <div class="form-section">
-        <form id="signup-form" action="">
-            <a class="moves-title" href="./"><h1>MOVES</h1></a>
-                
-                <label for="signup-email">Email*</label>
-                <input type="email" id="signup-email" placeholder="Enter email..." required />
-     
-                <label for="organization-phone">Phone Number (optional)</label>
-                <input type="tel" id="organization-phone" placeholder="Enter phone number..." />
+      <form id="signup-form" action="">
 
-                <label for="signup-password">Password*</label>
-                <input type="password" id="signup-password" placeholder="Enter password..." required />
-          
-                <label for="signup-password-confirm">Confirm Password*</label>
-                <input type="password" id="signup-password-confirm" placeholder="Confirm password..." required />
-          
-                <label for="organization-name">Organization Name*</label>
-                <input type="text" id="organization-name" placeholder="Enter organization name..." required/>
-         
-                <label for="organization-type">Organization Type*</label>
-                <select id="organization-type" name="organization-type">
-                    <option value="">Select an option</option>
-                    <option value="Bar">Bar</option>
-                    <option value="Restaurant">Restaurant</option>
-                    <option value="Night Club">Night Club</option>
-                    <option value="Greek Life">Greek Life</option>
-                    <option value="Student Club">Student Club</option>
-                    <option value="Other">Other (please specify)</option>      
-                </select>
-                <div id="other-organization-type-container" style="display: none; margin-top: 10px;">
-                    <label for="other-organization-type">Please specify organization type:</label>
-                    <input type="text" id="other-organization-type" name="other-organization-type" placeholder="Enter organization type..." />
-                </div>
-       
-                <label for="organization-description">Description/About (optional)</label>
-                <textarea id="organization-description" placeholder="Tell us about your organization..."></textarea>
+        <!-- Your existing “MOVES” title or brand name -->
+        <div class="moves-title"><h1>Sign Up</h1></div>
+        
+        <input type="email" id="signup-email" placeholder="Email*" required />
 
-                <label for="organization-location">Primary Location (optional) </label>
-                <input type="text" id="organization-location" placeholder="Enter a location..." />
-      
-                <label for="organization-photo">Photo (optional):</label>
-                <input type="file" id="organization-photo" accept="image/*"/>
+        <input type="tel" id="organization-phone" placeholder="Phone (Optional)" />
 
-                <label for="multi-select-input">Link your Moves App account(s) (optional):</label>
-                <div class="multi-select-container">
-                    <div id="selected-users" class="selected-users"></div>
-                        <input type="text" id="multi-select-input" placeholder="Search for users..." autocomplete="off">
-                    <div id="suggestions-box" class="suggestions-box"></div>
-                </div>
-                
-    
- 
-            <button type="submit" class="btn">Sign Up</button>
-
-            <div class="register-link">
-                <p>Already have an account? <a href="./login.html">Login</a></p>
-            </div>
-        </form>
-    </div>
-    </div>
-
-    <!-- Custom Reusable Alert Modal -->
-    <div class="alert-overlay" id="alert-overlay">
-        <div class="alert-modal">
-            <h2 id="alert-title">Notification</h2>
-            <p id="alert-message">This is the alert message</p>
-            <div class="modal-buttons">
-                <!-- Just a single "OK" or "Close" button -->
-                <button class="btn modal-confirm-btn" id="alert-ok">OK</button>
-            </div>
+        <!-- Password Fields Side by Side -->
+        <div class="password-container">
+          <input type="password" id="signup-password" placeholder="Password*" required />
+          <input type="password" id="signup-password-confirm" placeholder="Confirm password*" required />
         </div>
+        
+        <input type="text" id="organization-name" placeholder="Organization Name*" required/>
+
+        <select id="organization-type" name="organization-type">
+          <option value="">Organization Type*</option>
+          <option value="Bar">Bar</option>
+          <option value="Restaurant">Restaurant</option>
+          <option value="Night Club">Night Club</option>
+          <option value="Greek Life">Greek Life</option>
+          <option value="Student Club">Student Club</option>
+          <option value="Other">Other (please specify)</option>
+        </select>
+
+        <div id="other-organization-type-container" style="display: none; margin-top: 10px;">
+          <input type="text" id="other-organization-type" name="other-organization-type" placeholder="Please specify organization type" />
+        </div>
+
+        <textarea id="organization-description" placeholder="Organization Description (Optional)"></textarea>
+
+        <input type="text" id="organization-location" placeholder="Primary Location (Optional)" />
+        
+        <input type="file" id="organization-photo" accept="image/*"/>
+        
+        <button type="submit" class="btn">Sign Up</button>
+
+        <div class="register-link">
+          <p>Already have an account? <a href="./login.html">Login</a></p>
+        </div>
+
+      </form>
     </div>
+  </div>
+</div>
+
+<!-- Custom Reusable Alert Modal -->
+<div class="alert-overlay" id="alert-overlay">
+  <div class="alert-modal">
+    <h2 id="alert-title">Notification</h2>
+    <p id="alert-message">This is the alert message</p>
+    <div class="modal-buttons">
+      <button class="btn modal-confirm-btn" id="alert-ok">OK</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

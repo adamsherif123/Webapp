@@ -1,6 +1,6 @@
 /* Variables */
 :root {
-   --main-bg-color: #f3f3eb;
+   --main-bg-color: #000;
    --primary-color: #b077ff;
    --primary-color-dark: #7d37ff;
    --secondary-color: #8537b3;
@@ -27,7 +27,7 @@ body {
 
 /* Navbar */
 .navbar {
-   background: var(--white-color);
+   background: #282828;
    height: 80px;
    display: flex;
    justify-content: center;
@@ -79,7 +79,8 @@ body {
    align-items: center;
    justify-content: center;
    text-decoration: none;
-   padding: 0 1rem;
+   width: auto;
+   padding: 0;
    height: 100%;
 }
 
@@ -98,22 +99,23 @@ body {
 }
 
 .button {
+   background-color: #282828;
+   font-size: 0.9rem;
    display: flex;
    justify-content: center;
    align-items: center;
    text-decoration: none;
-   padding: 10px 20px;
-   width: 100%;
+   padding: 8px 16px;
+   width: auto;
    border: none;
    border-radius: 4px;
-   background: var(--primary-color);
    color: var(--white-color);
    cursor: pointer;
-   transition: background 0.3s ease;
+   transition: background-color 0.3s ease;
 }
 
 .button:hover {
-   background: var(--primary-color-dark);
+   background: #505050;
 }
 
 .navbar__toggle {
@@ -130,9 +132,7 @@ body {
    transition: all 0.3s ease-in-out;
 }
 
-/* Active Navbar Button */
 .navbar__btn.active-nav > a.button {
-   /* Example of a minimal distinct look */
    border-bottom: 2px solid var(--primary-color-dark);
 }
  
@@ -250,8 +250,8 @@ body {
    display: inline-block;
    padding: 14px 28px;  /* Button size */
    font-size: 20px;  /* Larger text */
-   background-color: white;  /* Default background */
-   border: 2px solid var(--primary-color);  /* Purple border */
+   background-color: #282828;  /* Default background */
+   border: 1px solid var(--white-color);  /* Purple border */
    border-radius: 100px;  /* Rounded corners */
    color: var(--primary-color);  /* Default text color */
    font-weight: bold;
@@ -454,7 +454,6 @@ body {
 }
 
 .form-section input,
-.form-section select,
 .form-section textarea {
    width: 100%;
    padding: 15px;
@@ -467,6 +466,39 @@ body {
    font-style: normal; /* or italic, if that's your preference */
    font-size: 16px;    /* ensure a consistent size across fields */
 }
+
+/* Ensure select fields match other input fields */
+.form-section select {
+   width: 100%;
+   padding: 15px;
+   margin-top: 5px;
+   border: 1px solid var(--white-color);
+   border-radius: 10px;
+   background-color: transparent;
+   color: var(--text-color);
+   font-family: var(--font-family);
+   font-size: 16px;
+   appearance: none; /* Remove default browser styles */
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   cursor: pointer;
+}
+
+/* Ensure consistency when the select field is focused */
+.form-section select:focus {
+   outline: none;
+   box-shadow: 0 0 5px var(--primary-color);
+}
+
+/* Add a dropdown icon */
+.form-section select {
+   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='24' height='24' fill='black'><path d='M7 10l5 5 5-5z'/></svg>");
+   background-repeat: no-repeat;
+   background-position: right 15px center;
+   background-size: 18px;
+   padding-right: 40px;
+}
+
 
 /* Target the multiple select default look */
 .select2-container--default .select2-selection--multiple {
@@ -714,151 +746,153 @@ body {
 
 /* Login & Sign Up Page */
 
-.moves-title {
-   background-image: linear-gradient(to top, #9808ff 0%, #c299ff 100%);
-   background-size: 100%;
-   -webkit-background-clip: text;
-   -webkit-text-fill-color: transparent;
-   display: block;
-   align-items: center;
-   cursor: pointer;
-   text-decoration: none;
-   font-weight: 500;
-   font-size: 1.5rem;
-}
-
-.form-page {
+/* Container to hold the two columns */
+.signup-container {
+   display: flex;
+   min-height: 100vh; /* fill the full screen height */
+   font-family: var(--font-family);
+ }
+ 
+ /* Left column: gradient + logo on top-left */
+ .left-col {
+   /* Use your purple gradient from your existing .form-page if you like */
+   /* Example: a linear gradient referencing your custom variables */
+   flex: 1;
+   background: linear-gradient(
+     135deg,
+     var(--main-bg-color),
+     var(--primary-color) 40%,
+     var(--secondary-color) 80%
+   );
+   position: relative; /* so we can position the logo absolutely */
+ }
+ 
+ /* Position the logo or brand in the top-left */
+ .logo-container {
+   position: absolute;
+   top: 20px;
+   left: 20px;
+   /* Adjust as desired */
+ }
+ 
+ /* Right column: black or near-black background for the form */
+ .right-col {
+   flex: 1;
+   background-color: #000; /* or var(--main-bg-color) if it's black/dark */
    display: flex;
    justify-content: center;
    align-items: center;
-   min-height: 100vh;
-   background: linear-gradient(
-    135deg,
-    var(--main-bg-color),
-    var(--primary-color) 40%,
-    var(--secondary-color) 80%
-  );
-}
-
-.form-page .wrapper {
-   width: 420px;
-   border: 2px solid rgba(255, 255, 255, 0.2);
-   backdrop-filter: blur(9px);
-   color: var(--primary-color);
-   border-radius: 12px;
-   padding: 30px 40px;
-   background-color: var(--white-color);
-}
-
-.moves-title {
-   display: block;
-   text-align: center;
- } 
-
-.form-page .input-box {
-   position: relative;
+   padding: 40px; 
+ }
+ 
+ /* The form itself */
+ .form-section {
    width: 100%;
-   margin-bottom: 20px;
+   max-width: 500px; 
+   color: #282828; 
+   background-color: transparent;
+ }
+ 
+ /* Make sure all text inside is white or a light color if needed */
+ .form-section label,
+ .form-section a,
+ .form-section p {
+   color: #fff; /* or keep your brand color if desired */
+ }
+ 
+ /* Adjust the input boxes on a dark background */
+ .form-section input,
+ .form-section textarea {
+   background-color: #333;      /* Slightly lighter than #000 for contrast */
+   color: #fff;                 /* White text */
+   border: 1px solid #444;      /* Subtle border */
+   margin-bottom: 15px;         /* Spacing between fields */
+ }
+ 
+ /* The sign-up button */
+ .form-section .btn {
+   background-color: #fff;      /* White background button */
+   color: #000;                 /* Black text */
+   border-radius: 30px;         /* Pill shape if you like */
+   padding: 14px 28px;
+   font-weight: bold;
+   margin-top: 10px;
+   transition: background-color 0.3s ease;
+ }
+ 
+ 
+ /* If you need an even rounder border on inputs */
+ .form-section input,
+ .form-section textarea {
+   border: 1px solid #fff;
+   background-color: #000; 
+   padding: 12px 20px;
+ }
+ 
+ /* Tweak the "MOVES" title if you like */
+ .moves-title {
+   font-size: 1.4rem; /* Increase size */
+   text-align: left; /* Align to the left */
+   margin-bottom: 20px; /* Space between title and form */
+   width: 100%; /* Ensure it spans the full width */
+   color: #fff;
 }
 
-.form-page .input-box input {
-   width: 100%;
-   padding: 15px 45px 15px 20px;
-   border: none;
-   border-radius: 5px;
-   background: var(--input-bg-color);
-   font-size: 16px;
-   color: var(--text-color);
-}
-
-.form-page .input-box i {
-   position: absolute;
-   right: 20px;
-   top: 50%;
-   transform: translateY(-50%);
-   font-size: 20px;
-   color: var(--primary-color);
-}
-
-.form-page .remember-forgot {
-   display: flex;
-   justify-content: space-between;
-   font-size: 14px;
-   margin-bottom: 20px;
-}
-
-.form-page .remember-forgot label {
-   display: flex;
-   align-items: center;
-}
-
-.form-page .remember-forgot input {
-   accent-color: var(--primary-color);
-   margin-right: 5px;
-}
-
-.form-page .remember-forgot a {
-   color: var(--primary-color);
+/* Remove any underline */
+.moves-title h1 {
    text-decoration: none;
+   border-bottom: 20px;
 }
-
-.form-page .remember-forgot a:hover {
-   text-decoration: underline;
-}
-
-.alternative-login {
-   margin-top: -15px; /* Negative margin to pull it closer up */
-   text-align: left; /* or left, depending on your design */
+ 
+ /* Make sure the multi-select container stands out on dark background */
+ .multi-select-container {
+   background-color: #333; /* match inputs */
+   border: 1px solid #444;
+   border-radius: 10px;
+   margin-bottom: 15px;
  }
 
-.form-page .alternative-login {
+ .password-container {
    display: flex;
-   justify-content: space-between;
-   font-size: 14px;
-   margin-bottom: 20px;
-}
-
-.form-page .alternative-login a {
-   color: var(--primary-color);
-   text-decoration: none;
-}
-
-.form-page .alternative-login a:hover {
-   text-decoration: underline;
-}
-
-.form-page .btn {
+   gap: 10px; /* Space between password fields */
    width: 100%;
-   height: 45px;
-   background: var(--primary-color);
-   color: var(--white-color);
-   border: none;
-   border-radius: 40px;
-   cursor: pointer;
-   font-size: 16px;
-   font-weight: 600;
-   transition: background 0.3s ease;
+   max-width: 500px;
 }
 
-.form-page .btn:hover {
-   background: var(--primary-color-dark);
+.password-container input {
+   border: 1px solid #fff;
+   background-color: #000; 
+   padding: 12px 20px;
 }
 
-.form-page .register-link {
-   font-size: 14px;
-   text-align: center;
-   margin-top: 20px;
+.password-container input::placeholder {
+   color: var(--placeholder-color);
 }
 
-.form-page .register-link p a {
-   color: var(--primary-color);
-   text-decoration: none;
-   font-weight: 600;
+/* Optional: Adjust responsiveness */
+@media screen and (max-width: 500px) {
+   .password-container {
+       flex-direction: column; /* Stack on small screens */
+   }
 }
 
-.form-page .register-link p a:hover {
-   text-decoration: underline;
+ 
+ /* Responsive adjustments */
+ @media screen and (max-width: 900px) {
+   .signup-container {
+     flex-direction: column;
+   }
+   .left-col, .right-col {
+     flex: unset;
+     width: 100%;
+     min-height: 50vh; /* each takes half the screen height if you want */
+   }
+   .logo-container {
+     position: static;
+     margin: 20px;
+   }
 }
+ 
 
 /* Linking Moves App accounts in signup page */
 
@@ -920,10 +954,10 @@ body {
 
 /* About us page */
 .about-container {
-   width: 90%;          /* Take up most of the page width */
-   max-width: 1200px;   /* Optional: limit max width for large screens */
-   margin: 0 auto;      /* Center the container horizontally */
-   padding: 20px 0;     /* Some spacing above/below if desired */
+   width: 90%;         
+   max-width: 1200px;   
+   margin: 0 auto;      
+   padding: 20px 0;     
  }
  
 .moves-info {
@@ -1587,7 +1621,6 @@ body {
    flex: 1;
  }
  
- /* Subtle fade-in effect for the card if desired */
  .create-event-card {
    animation: fadeInUp 0.4s ease forwards;
  }
@@ -1600,5 +1633,19 @@ body {
      opacity: 1;
      transform: translateY(0);
    }
+}
+
+.event-image-thumbnail {
+   width: 50px;
+   height: 50px;
+   object-fit: cover;
+   margin-right: 1rem;
+   border-radius: 4px;
+   float: left; /* or however you want to position it */
+ }
+ 
+ .event-card-header {
+   display: flex;
+   align-items: center;
  }
  

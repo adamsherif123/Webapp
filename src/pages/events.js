@@ -1,13 +1,15 @@
 // src/pages/events.js
 
-import { auth, db } from '../firebase.js';
-import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { auth, db, storage } from '../firebase.js';
+import { addDoc, collection, Timestamp, updateDoc } from 'firebase/firestore';
 import { showAlert } from '../utils/alerts.js';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // We'll import jQuery and select2
-import $ from 'jquery';
+import $, { error } from 'jquery';
 import 'select2';
 import 'select2/dist/css/select2.min.css'; // optional styles
+import firebase from 'firebase/compat/app';
 
 export function initEventForm() {
   const eventForm = document.getElementById('event-form');
@@ -107,86 +109,103 @@ export function initEventForm() {
   let latitude = null;
   let longitude = null;
 
+  // -- (B) We'll store the user-selected image in this variable
+  let selectedFile = null;
+
   // If user clicks "Yes", create the event in Firestore
   if (confirmYes) {
     confirmYes.addEventListener('click', async function() {
-        if (confirmOverlay) confirmOverlay.style.display = 'none';
+      if (confirmOverlay) confirmOverlay.style.display = 'none';
 
-        // Gather form data
-        const eventName = document.getElementById('event-name').value;
-        const location  = document.getElementById('search-input').value;
-        const selectedType = eventTypeSelect.value;
-        const otherVal = otherInput.value;
-        const finalEventType = (selectedType === 'Other') ? otherVal : selectedType;
+      // Gather form data
+      const eventName = document.getElementById('event-name').value;
+      const location  = document.getElementById('search-input').value;
+      const selectedType = eventTypeSelect.value;
+      const otherVal = otherInput.value;
+      const finalEventType = (selectedType === 'Other') ? otherVal : selectedType;
 
-        // time
-        const startString = document.getElementById('start-time').value; 
-        // e.g. "2023-09-12T21:00" from datetime-local
+      // time
+      const startString = document.getElementById('start-time').value; 
+      const startDate = new Date(startString);
+      const startTimeTimestamp = Timestamp.fromDate(startDate);
 
-        // Convert to a JS Date
-        const startDate = new Date(startString);
+      const endString = document.getElementById('end-time').value;
+      const endDate = new Date(endString);
+      const endTimeTimestamp = Timestamp.fromDate(endDate);
 
-        // Convert to Firestore Timestamp
-        const startTimeTimestamp = Timestamp.fromDate(startDate);
+      const venueName = document.getElementById('venue-name').value || null;
+      const inviteType = inviteTypeSelect.value || null;
 
-        // Do the same for end-time
-        const endString = document.getElementById('end-time').value;
-        const endDate = new Date(endString);
-        const endTimeTimestamp = Timestamp.fromDate(endDate);
+      let invitees = [];
+      if (inviteType === 'invites') {
+        invitees = Array
+          .from(inviteesSelect.selectedOptions)
+          .map(opt => opt.value);
+      }
 
+      const ticketing = ticketingSelect.value;
+      const ticketPrice = (ticketing === 'Yes')
+        ? (document.getElementById('ticket-price').value || null)
+        : null;
+      const capacity = (ticketing === 'Yes')
+        ? (document.getElementById('capacity').value || null)
+        : null;
+      const eventDescription = document.getElementById('event-description').value || null;
 
-        const venueName = document.getElementById('venue-name').value || null;
-        const inviteType = inviteTypeSelect.value || null;
+      const user = auth.currentUser;
+      if (!user) {
+        showAlert('Error', 'No authenticated user found!');
+        return;
+      }
 
-        let invitees = [];
-        if (inviteType === 'invites') {
-            invitees = Array
-            .from(inviteesSelect.selectedOptions)
-            .map(opt => opt.value);
+      try {
+        // 1) Create the event document (no imageUrl yet)
+        const eventData = {
+          eventName,
+          startTime: startTimeTimestamp,
+          endTime: endTimeTimestamp,
+          createdAt: Timestamp.now(),
+          latitude,
+          longitude,
+          eventType: finalEventType,
+          venueName,
+          inviteType,
+          invitees,
+          ticketing,
+          ticketPrice,
+          capacity,
+          eventDescription,
+          createdBy: user.uid,
+          // We'll add imageUrl in a moment
+        };
+
+        const docRef = await addDoc(collection(db, 'events'), eventData);
+
+        // 2) If an image was selected, upload it and get the download URL
+        if (selectedFile) {
+          const storageRef = ref(storage, `eventImages/${user.uid}/${docRef.id}.jpg`);
+          await uploadBytes(storageRef, selectedFile);
+          console.log('Image uploaded successfully');
+
+          // Once uploaded, get the download URL
+          const downloadURL = await getDownloadURL(storageRef);
+          
+          // 3) Update the Firestore doc with the imageUrl
+          await updateDoc(docRef, {
+            imageUrl: downloadURL
+          });
         }
 
-        const ticketing = ticketingSelect.value;
-        const ticketPrice = (ticketing === 'Yes')
-            ? (document.getElementById('ticket-price').value || null)
-            : null;
-        const capacity = (ticketing === 'Yes')
-            ? (document.getElementById('capacity').value || null)
-            : null;
-        const eventDescription = document.getElementById('event-description').value || null;
-
-        const user = auth.currentUser;
-
-        try {
-            const eventData = {
-                eventName,
-                startTime: startTimeTimestamp,
-                endTime: endTimeTimestamp,
-                createdAt: Timestamp.now(),
-                latitude,
-                longitude,
-                eventType: finalEventType,
-                venueName,
-                inviteType,
-                invitees,
-                ticketing,
-                ticketPrice,
-                capacity,
-                eventDescription,
-                createdBy: user.uid
-            };
-            // Write to Firestore
-            await addDoc(collection(db, 'events'), eventData);
-
-            // Show "Success" message with a callback that resets the form
-            showAlert('Success!', 'Your event is now on the map.', () => {
-                window.location.href = '/dashboard.html';
-            });
-
-        } catch (error) {
-            console.error('Error creating event:', error);
-            showAlert('Error', error.message);
-        }
+        // 4) Show success
+        showAlert('Success!', 'Your event is now on the map.', () => {
+          window.location.href = '/dashboard.html';
         });
+
+      } catch (error) {
+        console.error('Error creating event:', error);
+        showAlert('Error', error.message);
+      }
+    });
   }
 
   // If user clicks "No", just hide the overlay
@@ -202,7 +221,6 @@ export function initEventForm() {
   const fileInput = document.getElementById('image-upload');
   const changeImageButton = document.querySelector('.change-image-btn');
 
-  // Initialize the Google Map + Autocomplete:
   initCreateEventMap();
 
   function triggerFileInput() {
@@ -216,17 +234,26 @@ export function initEventForm() {
     changeImageButton.addEventListener('click', triggerFileInput);
   }
 
+  // Only preview here, do not upload.
   if (fileInput) {
     fileInput.addEventListener('change', function(event) {
       if (event.target.files && event.target.files[0]) {
+        selectedFile = event.target.files[0];
+
+        // Just handle the preview
         const reader = new FileReader();
         reader.onload = function(e) {
           partyImageDiv.style.background = `url('${e.target.result}') center center / cover no-repeat`;
           placeholderText.style.display = 'none';
         };
-        reader.readAsDataURL(event.target.files[0]);
+        reader.readAsDataURL(selectedFile);
       }
     });
+  }
+
+  const user = auth.currentUser;
+  if (!user) {
+    console.log("auth.currentUser = null");
   }
 
   function initCreateEventMap() {
@@ -251,6 +278,7 @@ export function initEventForm() {
     autocomplete.addListener('place_changed', () => {
       marker.setVisible(false);
       const place = autocomplete.getPlace();
+      console.log(place);
       if (!place.geometry) {
         window.alert('No details available');
         return;
@@ -267,8 +295,6 @@ export function initEventForm() {
       // Here we set the lat/lng variables we declared above
       latitude = place.geometry.location.lat();
       longitude = place.geometry.location.lng();
-      
     });
   }
-  
 }

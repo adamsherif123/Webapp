@@ -239,32 +239,72 @@ function formatTimestampOrString(value) {
     }
 }
 
+// function createEventCard(event, isOngoing) {
+//   const card = document.createElement('div');
+//   card.classList.add('dynamic-event-card');
+  
+//   let content = `
+//     <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
+//     <p><strong>Venue:</strong> ${event.venueName}</p>
+//     <p><strong>Address:</strong> ${event.location}</p>
+//     <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
+//     <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
+//     <p><strong>Total RSVPs:</strong> 100}</p>
+//     <p><strong>Gender (RSVPs):</strong> M: 50%, F: 50%</p>
+//   `;
+
+//   if (isOngoing) {
+//     content += `
+//       <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent}</p>
+//       <p><strong>Gender (At Event):</strong> 
+//          M: 50%, 
+//          F: 50%
+//       </p>
+//     `;
+//   }
+
+//   card.innerHTML = content;
+//   return card;
+// }
+
 function createEventCard(event, isOngoing) {
   const card = document.createElement('div');
   card.classList.add('dynamic-event-card');
-  
+
+  // 1) Build a small thumbnail if we have an imageUrl
+  let thumbnailHTML = '';
+  if (event.imageUrl) {
+    thumbnailHTML = `
+      <img 
+        src="${event.imageUrl}" 
+        alt="Event Image" 
+        class="event-image-thumbnail" 
+      />
+    `;
+  }
+
+  // 2) Incorporate that thumbnail into the card’s content
   let content = `
-    <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
-    <p><strong>Venue:</strong> ${event.venueName}</p>
-    <p><strong>Address:</strong> ${event.location}</p>
+    <div class="event-card-header">
+      ${thumbnailHTML}
+      <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
+    </div>
+    <p><strong>Venue:</strong> ${event.venueName ?? 'N/A'}</p>
+    <p><strong>Address:</strong> ${event.location ?? 'N/A'}</p>
     <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
     <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
-    <p><strong>Total RSVPs:</strong> 100}</p>
+    <p><strong>Total RSVPs:</strong> 100</p>
     <p><strong>Gender (RSVPs):</strong> M: 50%, F: 50%</p>
   `;
 
   if (isOngoing) {
     content += `
-      <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent}</p>
-      <p><strong>Gender (At Event):</strong> 
-         M: 50%, 
-         F: 50%
-      </p>
+      <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent ?? 0}</p>
+      <p><strong>Gender (At Event):</strong> M: 50%, F: 50%</p>
     `;
   }
 
   card.innerHTML = content;
   return card;
-
-
 }
+
