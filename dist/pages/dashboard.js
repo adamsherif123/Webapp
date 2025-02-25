@@ -3,6 +3,7 @@
 import { auth, db } from '../firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
 import { collection, query, where, getDocs } from 'firebase/firestore';
+import { showAlert } from '../utils/alerts.js';
 
 // Example data if you want to keep them
 const ongoingEvents = [
@@ -35,11 +36,11 @@ const upcomingEvents = [
 
 export function initDashboard() {
   // Set the static stats except for total events:
-  document.getElementById('total-revenue').innerText = "8,750";
+  document.getElementById('total-revenue').innerText = "placeholder";
   // Instead of showing "0" for total-events, show "..." while loading
   document.getElementById('total-events').innerText  = "...";
-  document.getElementById('total-rsvps').innerText   = "1,230";
-  document.getElementById('followers-count').innerText = "620";
+  document.getElementById('total-rsvps').innerText   = "placeholder";
+  document.getElementById('followers-count').innerText = "placeholder";
 
   // 2) Start with "Loading..." or "No events yet" in ongoing
   const ongoingList = document.getElementById('ongoing-events-list');
@@ -240,31 +241,56 @@ function formatTimestampOrString(value) {
 }
 
 function createEventCard(event, isOngoing) {
-  const card = document.createElement('div');
-  card.classList.add('dynamic-event-card');
+    const card = document.createElement('div');
+    card.classList.add('dynamic-event-card');
   
-  let content = `
-    <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
-    <p><strong>Venue:</strong> ${event.venueName}</p>
-    <p><strong>Address:</strong> ${event.location}</p>
-    <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
-    <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
-    <p><strong>Total RSVPs:</strong> 100}</p>
-    <p><strong>Gender (RSVPs):</strong> M: 50%, F: 50%</p>
-  `;
-
-  if (isOngoing) {
-    content += `
-      <p><strong>Currently at Event:</strong> ${event.currentlyAtEvent}</p>
-      <p><strong>Gender (At Event):</strong> 
-         M: 50%, 
-         F: 50%
-      </p>
+    // First container: event info
+    let infoContent = `
+        <h4>Details</h4>
+        <a href="edit-event.html" class="hyperlink">Edit Event</a> 
     `;
+    if (event.venueName) {
+      infoContent += `<p><strong>Venue:</strong> ${event.venueName}</p>`;
+    }
+  
+    infoContent += `
+      <p><strong>Address:</strong> ${event.location}</p>
+      <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
+      <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
+      <p><strong>Access:</strong> ${event.inviteType}</p>
+    `;
+  
+    if (event.ticketing == 'Yes') {
+      infoContent += `
+        <p><strong>Ticket Price:</strong> $${event.ticketPrice}</p>
+        <p><strong>Capacity:</strong> ${event.capacity}</p>
+      `;
+    }
+  
+    // Second container: stats (placeholders or real stats)
+    let statsContent = `
+      <p><strong>Total RSVPs:</strong> ***PLACEHOLDER***</p>
+      <p><strong>Gender (RSVPs):</strong> ***PLACEHOLDER***</p>
+    `;
+    if (isOngoing) {
+      statsContent += `
+        <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
+        <p><strong>Gender (At Event):</strong> ***PLACEHOLDER***</p>
+      `;
+    }
+  
+    // Build final HTML with two sections
+    card.innerHTML = `
+      <div class="event-info">
+        <h3>${event.eventName} - <span class="event-type">${event.eventType}</span></h3>
+        ${infoContent}
+      </div>
+      <div class="event-stats">
+        <h4>Stats</h4>
+        ${statsContent}
+      </div>
+    `;
+  
+    return card;
   }
-
-  card.innerHTML = content;
-  return card;
-
-
-}
+  

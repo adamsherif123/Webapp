@@ -13,6 +13,8 @@ export function initEventForm() {
   const eventForm = document.getElementById('event-form');
   if (!eventForm) return;
 
+  let validPlaceSelected = false;
+
   // 1) If event type = "Other", show additional input
   const eventTypeSelect = document.getElementById('event-type');
   const otherContainer = document.getElementById('other-event-type-container');
@@ -100,6 +102,10 @@ export function initEventForm() {
   // On form submit, show the confirmation overlay
   eventForm.addEventListener('submit', (e) => {
     e.preventDefault();
+    if (!validPlaceSelected) {
+        showAlert('Invalid Address','Please select a valid location from the dropdown');
+        return; // Stop form submission
+    }
     if (confirmOverlay) confirmOverlay.style.display = 'flex';
   });
 
@@ -244,31 +250,39 @@ export function initEventForm() {
     const marker = new google.maps.Marker({ map });
   
     const autocomplete = new google.maps.places.Autocomplete(searchInput, {
-      types: ['geocode'],
     });
     autocomplete.bindTo('bounds', map);
-  
-    autocomplete.addListener('place_changed', () => {
-      marker.setVisible(false);
-      const place = autocomplete.getPlace();
-      if (!place.geometry) {
-        window.alert('No details available');
-        return;
-      }
-      if (place.geometry.viewport) {
-        map.fitBounds(place.geometry.viewport);
-      } else {
-        map.setCenter(place.geometry.location);
-        map.setZoom(17); // 17 is a good default zoom
-      }
-      marker.setPosition(place.geometry.location);
-      marker.setVisible(true);
 
-      // Here we set the lat/lng variables we declared above
-      latitude = place.geometry.location.lat();
-      longitude = place.geometry.location.lng();
-      
+    // (A) Listen for "place_changed"
+    autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        if (!place.geometry) {
+        // If no geometry, invalid place
+        validPlaceSelected = false;
+        showAlert('Invalid Address','Please select a valid location from the dropdown');
+        return;
+        }
+
+        // We have a valid place:
+        validPlaceSelected = true;
+
+        if (place.geometry.viewport) {
+        map.fitBounds(place.geometry.viewport);
+        } else {
+        map.setCenter(place.geometry.location);
+        map.setZoom(17);
+        }
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
+
+        // Store lat/lng as needed
+        latitude = place.geometry.location.lat();
+        longitude = place.geometry.location.lng();
+    });
+
+    // (B) If user types after selecting a place, reset validPlaceSelected
+    searchInput.addEventListener('input', () => {
+        validPlaceSelected = false;
     });
   }
-  
 }
