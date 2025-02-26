@@ -131,7 +131,7 @@ export function initSignupForm() {
         photoURL = 'https://via.placeholder.com/300';
       }
 
-      await setDoc(doc(db, "users", user.uid), {
+      await setDoc(doc(db, "venues", user.uid), {
         email: user.email,
         phoneNumber,
         organizationName,

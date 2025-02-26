@@ -179,7 +179,7 @@ export function initEventForm() {
           // We'll add imageUrl in a moment
         };
 
-        const docRef = await addDoc(collection(db, 'events'), eventData);
+        const docRef = await addDoc(collection(db, 'publicEvents'), eventData);
 
         // 2) If an image was selected, upload it and get the download URL
         if (selectedFile) {
