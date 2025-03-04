@@ -97,7 +97,7 @@ export function initAccountSettings() {
   auth.onAuthStateChanged(async (user) => {
     if (!user) return;
     try {
-      const snap = await getDoc(doc(db, 'users', user.uid));
+      const snap = await getDoc(doc(db, 'venues', user.uid));
       if (!snap.exists()) {
         showAlert('Error', 'Your user record was not found.');
         return;
@@ -163,12 +163,12 @@ export function initAccountSettings() {
     let newPhotoURL = null;
     if (photoInput && photoInput.files[0]) {
       // TODO: actual storage upload
-      newPhotoURL = 'https://via.placeholder.com/300'; // dummy
+      newPhotoURL = user.photoURL; // dummy
     }
 
     try {
       // Update Firestore
-      await updateDoc(doc(db, 'users', user.uid), {
+      await updateDoc(doc(db, 'venues', user.uid), {
         phoneNumber: phone,
         organizationName: orgName,
         organizationType: finalType,
@@ -178,7 +178,6 @@ export function initAccountSettings() {
         ...(newPhotoURL && { photoURL: newPhotoURL })
       });
 
-      // Update displayName in Auth
       await updateProfile(user, {
         displayName: orgName
       });

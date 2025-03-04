@@ -20,7 +20,7 @@ export function initLoginForm() {
       const user = userCredential.user;
 
       // Check approval status in Firestore
-      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      const userDoc = await getDoc(doc(db, 'venues', user.uid));
       if (userDoc.exists()) {
         const userData = userDoc.data();
         if (userData.approved) {

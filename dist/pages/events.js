@@ -133,49 +133,65 @@ export function initEventForm() {
       }
 
       try {
-        // Gather form data
+        // 1) Gather form data
         const eventName = document.getElementById('event-name').value;
-        const location  = document.getElementById('search-input').value;
+        const fullLocation = document.getElementById('search-input').value;
+        const location = fullLocation.split(',')[0].trim();  
         const selectedType = eventTypeSelect.value;
         const otherVal = otherInput.value;
         const finalEventType = (selectedType === 'Other') ? otherVal : selectedType;
-
-        // time
+      
+        // Convert date strings to Firestore Timestamps
         const startString = document.getElementById('start-time').value;
         const startDate = new Date(startString);
         const startTimeTimestamp = Timestamp.fromDate(startDate);
-
+      
         const endString = document.getElementById('end-time').value;
         const endDate = new Date(endString);
         const endTimeTimestamp = Timestamp.fromDate(endDate);
-
-        const venueName = document.getElementById('venue-name').value || null;
+      
+        const userVenueName = document.getElementById('venue-name').value;
+        // If blank, store empty string
+        const venueName = userVenueName ? userVenueName : '';
+      
         const inviteType = inviteTypeSelect.value || null;
-
+      
         let invitees = [];
         if (inviteType === 'invites') {
           invitees = Array
             .from(inviteesSelect.selectedOptions)
             .map(opt => opt.value);
         }
-
-        const ticketing = ticketingSelect.value;
-        const ticketPrice = (ticketing === 'Yes')
-          ? (document.getElementById('ticket-price').value || null)
-          : null;
-        const capacity = (ticketing === 'Yes')
-          ? (document.getElementById('capacity').value || null)
-          : null;
-        const eventDescription = document.getElementById('event-description').value || null;
-
-        // 1) Create the event document (no imageUrl yet)
+      
+        // Ticketing: if the user chose "Yes", set ticketing=true, otherwise false
+        const isTicketingYes = (ticketingSelect.value === 'Yes');
+        const ticketing = isTicketingYes ? true : false;
+      
+        const userTicketPrice = document.getElementById('ticket-price').value;
+        const ticketPrice = (isTicketingYes && userTicketPrice)
+          ? Number(userTicketPrice)
+          : 0;
+      
+        const userCapacity = document.getElementById('capacity').value;
+        const capacity = (isTicketingYes && userCapacity)
+          ? Number(userCapacity)
+          : 0;
+      
+        // eventDescription: empty string if user left it blank
+        const userDescription = document.getElementById('event-description').value;
+        const eventDescription = userDescription ? userDescription : '';
+      
+        // 2) Create the event document (no imageUrl yet)
+        //    Make sure to include 'location' so it appears like "Amity Hall" in your screenshot
         const eventData = {
           eventName,
+          location,                 // <--- Matches "location" in your screenshot
           startTime: startTimeTimestamp,
           endTime: endTimeTimestamp,
           createdAt: Timestamp.now(),
-          latitude,
-          longitude,
+          createdBy: user.uid,
+          latitude,                // from map
+          longitude,               // from map
           eventType: finalEventType,
           venueName,
           inviteType,
@@ -183,34 +199,36 @@ export function initEventForm() {
           ticketing,
           ticketPrice,
           capacity,
-          eventDescription,
-          createdBy: user.uid
+          eventDescription
         };
-
-        const docRef = await addDoc(collection(db, 'events'), eventData);
-
-        // 2) If an image was selected, upload it to Firebase Storage
+      
+        // Use addDoc to create a brand-new doc with a generated ID
+        const docRef = await addDoc(collection(db, 'publicEvents'), eventData);
+      
+        // 3) Store the doc’s auto-generated ID in an eventId field
+        await updateDoc(docRef, { eventId: docRef.id });
+      
+        // 4) If an image was selected, upload it to Firebase Storage
         if (selectedFile) {
           const storageRef = ref(storage, `eventImages/${user.uid}/${docRef.id}.jpg`);
           await uploadBytes(storageRef, selectedFile);
           console.log('Image uploaded successfully');
-
-          // 3) Once uploaded, get the download URL and update Firestore doc
+      
+          // Once uploaded, get the download URL and update Firestore doc
           const downloadURL = await getDownloadURL(storageRef);
-          await updateDoc(docRef, {
-            imageUrl: downloadURL
-          });
+          await updateDoc(docRef, { imageUrl: downloadURL });
         }
-
-        // 4) Show success
+      
+        // 5) Show success and redirect
         showAlert('Success!', 'Your event is now on the map.', () => {
           window.location.href = '/dashboard.html';
         });
-
+      
       } catch (error) {
         console.error('Error creating event:', error);
         showAlert('Error', error.message);
       }
+      
     });
   }
 

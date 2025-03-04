@@ -2,46 +2,20 @@
 
 import { auth, db } from '../firebase.js';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { showAlert } from '../utils/alerts.js';
 
 // Example data if you want to keep them
-const ongoingEvents = [
-  {
-    // NOTICE: no Firestore ID for these sample events,
-    // so we'll generate a fallback ID in createEventCard().
-    eventName: "Late Summer Bash",
-    eventType: "Party",
-    venueName: "Rooftop Lounge",
-    location: "456 Skyline Dr",
-    startTime: "2023-08-25 18:00",
-    endTime: "2023-08-25 23:00",
-    totalRSVP: 75,
-    genderRSVP: { malePct: 66.7, femalePct: 33.3 },
-    currentlyAtEvent: 45,
-    genderAtEvent: { malePct: 60, femalePct: 40 }
-  }
-];
+const ongoingEvents = [];
 
-const upcomingEvents = [
-  {
-    eventName: "Campus Kickoff",
-    eventType: "College Greek Life Party",
-    venueName: "Alpha Beta House",
-    location: "University District",
-    startTime: "2023-09-01 20:00",
-    endTime: "2023-09-02 02:00",
-    totalRSVP: 40,
-    genderRSVP: { malePct: 50, femalePct: 50 }
-  }
-];
+const upcomingEvents = [];
 
 export function initDashboard() {
   // Set the static stats except for total events:
   document.getElementById('total-revenue').innerText = "placeholder";
   // Instead of showing "0" for total-events, show "..." while loading
   document.getElementById('total-events').innerText  = "...";
-  document.getElementById('total-rsvps').innerText   = "placeholder";
+  document.getElementById('total-rsvps').innerText   = "...";
   document.getElementById('followers-count').innerText = "placeholder";
 
   // Show "Loading..." initially for ongoing events
@@ -63,11 +37,13 @@ export function initDashboard() {
 
     // We have a user => fetch real total events
     fetchRealTotalEvents(user.uid);
+    fetchLifetimeRsvpCount(user.uid)
+
 
     try {
       // (A) Query all events created by this user
       const q = query(
-        collection(db, 'events'),
+        collection(db, 'publicEvents'),
         where('createdBy', '==', user.uid)
       );
       const snapshot = await getDocs(q);
@@ -132,7 +108,6 @@ export function initDashboard() {
 
   });
 
-  // 3) Populate Ongoing & Upcoming from your sample arrays, if you want:
   populateEvents();
 }
 
@@ -141,7 +116,7 @@ export function initDashboard() {
  */
 async function fetchRealTotalEvents(userUid) {
   try {
-    const eventsRef = collection(db, 'events');
+    const eventsRef = collection(db, 'publicEvents');
     const q = query(eventsRef, where('createdBy', '==', userUid));
     const querySnapshot = await getDocs(q);
     const totalEvents   = querySnapshot.size;
@@ -153,6 +128,36 @@ async function fetchRealTotalEvents(userUid) {
     document.getElementById('total-events').innerText = "N/A";
   }
 }
+
+async function fetchLifetimeRsvpCount(userUid) {
+  try {
+    const eventsRef = collection(db, 'publicEvents');
+    const q = query(eventsRef, where('createdBy', '==', userUid));
+    const querySnapshot = await getDocs(q);
+    
+    let totalRsvpCount = 0;
+    
+    // Iterate over each event document
+    const promises = querySnapshot.docs.map(async (eventDoc) => {
+      // Reference to the "rsvped-users" subcollection for the event
+      const rsvpCollectionRef = collection(eventDoc.ref, 'rsvped-users');
+      // Fetch the documents in the subcollection
+      const rsvpSnapshot = await getDocs(rsvpCollectionRef);
+      // Increment the total count by the number of RSVP documents
+      totalRsvpCount += rsvpSnapshot.size;
+    });
+    
+    // Wait for all subcollection queries to finish
+    await Promise.all(promises);
+    
+    // Display the aggregated count of rsvped users
+    document.getElementById('total-rsvps').innerText = totalRsvpCount;
+  } catch (error) {
+    console.error('Error fetching user events:', error);
+    document.getElementById('total-rsvps').innerText = "N/A";
+  }
+}
+
 
 /**
  * Renders an array of "ongoing" events into #ongoing-events-list
@@ -241,11 +246,9 @@ function createEventCard(event, isOngoing) {
   const card = document.createElement('div');
   card.classList.add('dynamic-event-card');
 
-  // Build small “header” with optional image
-  let imageTag = '';
-  if (event.imageUrl) {
-    imageTag = `<img src="${event.imageUrl}" alt="Event Icon" class="event-icon" />`;
-  }
+  let imageTag = event.imageUrl
+    ? `<img src="${event.imageUrl}" alt="Event Icon" class="event-icon" />`
+    : '';
 
   const headerHTML = `
     <div class="event-card-header">
@@ -254,7 +257,6 @@ function createEventCard(event, isOngoing) {
     </div>
   `;
 
-  // The “Details” section
   let infoContent = `
     <h4>Details</h4>
     <a href="edit-event.html" class="hyperlink">Edit Event</a>
@@ -263,26 +265,21 @@ function createEventCard(event, isOngoing) {
     infoContent += `<p><strong>Venue:</strong> ${event.venueName}</p>`;
   }
 
-  // Use the doc ID if present; else generate a fallback from eventName
-  const uniqueId = event.id 
+  const uniqueId = event.id
     ? event.id
     : `sample-${(event.eventName || 'untitled').replace(/\W+/g, '-')}`;
 
   infoContent += `
-    <p id="address-${uniqueId}">
-      <strong>Address:</strong> Loading...
-    </p>
+    <p id="address-${uniqueId}"><strong>Address:</strong> Loading...</p>
     <p><strong>Start Time:</strong> ${formatTimestampOrString(event.startTime)}</p>
-    <p><strong>End Time:</strong>   ${formatTimestampOrString(event.endTime)}</p>
+    <p><strong>End Time:</strong> ${formatTimestampOrString(event.endTime)}</p>
   `;
 
-  // Stats (placeholder)
   let statsContent = `
     <h4>Stats</h4>
-    <p><strong>Total RSVPs:</strong> ***PLACEHOLDER***</p>
-    <p><strong>Gender (RSVPs):</strong> ***PLACEHOLDER***</p>
+    <p><strong>Total RSVPs:</strong> <span id="rsvp-count-${uniqueId}">Loading...</span></p>
   `;
-  // If ongoing, we show more stats
+
   if (isOngoing) {
     statsContent += `
       <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
@@ -290,41 +287,55 @@ function createEventCard(event, isOngoing) {
     `;
   }
 
-  // Combine everything
-  card.innerHTML = `
-    ${headerHTML}
-    <div class="event-info">
-      ${infoContent}
-    </div>
-    <div class="event-stats">
-      ${statsContent}
-    </div>
+  card.innerHTML = `${headerHTML}
+    <div class="event-info">${infoContent}</div>
+    <div class="event-stats">${statsContent}</div>
   `;
 
-  // Now handle “Address:” logic
+  // Handle Address
   const addressEl = card.querySelector(`#address-${uniqueId}`);
-
-  // 1) If Firestore has a string `event.location`, just show it
   if (event.location) {
     addressEl.innerHTML = `<strong>Address:</strong> ${event.location}`;
-  }
-  // 2) Otherwise, if we have lat/lng => reverse geocode
-  else if (event.latitude && event.longitude) {
+  } else if (event.latitude && event.longitude) {
     reverseGeocode(event.latitude, event.longitude)
-      .then(formattedAddr => {
-        addressEl.innerHTML = `<strong>Address:</strong> ${formattedAddr}`;
-      })
-      .catch(err => {
-        addressEl.innerHTML = `<strong>Address:</strong> (Could not fetch)`;
-        console.error('Reverse geocode error:', err);
-      });
-  }
-  // 3) Fallback
-  else {
+      .then(formattedAddr => addressEl.innerHTML = `<strong>Address:</strong> ${formattedAddr}`)
+      .catch(() => addressEl.innerHTML = `<strong>Address:</strong> (Could not fetch)`);
+  } else {
     addressEl.innerHTML = `<strong>Address:</strong> Not available`;
   }
 
+  // Fetch RSVP count and update UI
+  const rsvpEl = card.querySelector(`#rsvp-count-${uniqueId}`);
+  if (event.id) {
+    fetchRsvpCount(event.id)
+      .then(count => {
+        rsvpEl.innerText = count;
+      })
+      .catch(() => {
+        rsvpEl.innerText = "N/A";
+      });
+    
+    // Make the RSVP element clickable for showing the modal
+    rsvpEl.style.cursor = 'pointer';
+    rsvpEl.addEventListener('click', () => {
+      showEventRsvpModal(event.id);
+    });
+  } else {
+    rsvpEl.innerText = "N/A";
+  }
+
   return card;
+}
+
+async function fetchRsvpCount(eventId) {
+  try {
+    const rsvpCollectionRef = collection(db, 'publicEvents', eventId, 'rsvped-users');
+    const rsvpSnapshot = await getDocs(rsvpCollectionRef);
+    return rsvpSnapshot.size; // Number of RSVP documents
+  } catch (error) {
+    console.error(`Error fetching RSVPs for event ${eventId}:`, error);
+    return "N/A";
+  }
 }
 
 /**
@@ -341,4 +352,134 @@ function reverseGeocode(lat, lng) {
       }
     });
   });
+}
+
+async function showEventRsvpModal(eventId) {
+  // Create an overlay that covers the entire screen
+  const modalOverlay = document.createElement('div');
+  modalOverlay.style.cssText = `
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  `;
+
+  // Create the modal container
+  const modalContent = document.createElement('div');
+  modalContent.style.cssText = `
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+    max-height: 80%;
+    overflow-y: auto;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  `;
+
+  // Add a title to the modal
+  const title = document.createElement('h2');
+  title.innerText = `RSVP List for Event`;
+  modalContent.appendChild(title);
+
+  // Fetch the RSVP subcollection for this event.
+  const rsvpCollectionRef = collection(db, 'publicEvents', eventId, 'rsvped-users');
+  let rsvpSnapshot;
+  try {
+    rsvpSnapshot = await getDocs(rsvpCollectionRef);
+  } catch (error) {
+    console.error(`Error fetching RSVPs for event ${eventId}:`, error);
+    const errorMsg = document.createElement('p');
+    errorMsg.innerText = 'Error loading RSVP list.';
+    modalContent.appendChild(errorMsg);
+  }
+
+  // Extract user IDs from the RSVP documents (assumes the doc ID is the user ID)
+  const userIds = rsvpSnapshot ? rsvpSnapshot.docs.map(doc => doc.id) : [];
+
+  // Fetch details for each user from the "users" collection
+  const userPromises = userIds.map(async (userId) => {
+    try {
+      const userDocRef = doc(db, 'users', userId);
+      const userDocSnap = await getDoc(userDocRef);
+      if (userDocSnap.exists()) {
+        return { id: userId, ...userDocSnap.data() };
+      }
+    } catch (error) {
+      console.error(`Error fetching user ${userId} details:`, error);
+    }
+    return null;
+  });
+
+  const users = (await Promise.all(userPromises)).filter(user => user != null);
+
+  // Create a container for the list of users
+  const userList = document.createElement('ul');
+  userList.style.listStyle = 'none';
+  userList.style.padding = '0';
+
+  if (users.length === 0) {
+    const emptyMsg = document.createElement('p');
+    emptyMsg.innerText = 'No RSVPs yet.';
+    modalContent.appendChild(emptyMsg);
+  } else {
+    // For each user, create a list item with their profile image, full name, and username
+    users.forEach(user => {
+      const listItem = document.createElement('li');
+      listItem.style.display = 'flex';
+      listItem.style.alignItems = 'center';
+      listItem.style.marginBottom = '10px';
+
+      // If a profile image is available, display it
+      if (user.profileImageUrl) {
+        const img = document.createElement('img');
+        img.src = user.profileImageUrl;
+        img.alt = user.fullName || 'Profile Image';
+        img.style.width = '40px';
+        img.style.height = '40px';
+        img.style.borderRadius = '50%';
+        img.style.marginRight = '10px';
+        listItem.appendChild(img);
+      }
+
+      // Create a container for the user's text details
+      const userDetails = document.createElement('div');
+
+      // Display the user's full name
+      const nameEl = document.createElement('p');
+      nameEl.style.margin = '0';
+      nameEl.style.fontWeight = 'bold';
+      nameEl.innerText = user.fullName || 'Unknown Name';
+
+      // Display the user's username (if available)
+      const usernameEl = document.createElement('p');
+      usernameEl.style.margin = '0';
+      usernameEl.style.fontSize = '0.9em';
+      usernameEl.style.color = '#666';
+      usernameEl.innerText = user.username ? `@${user.username}` : '';
+
+      userDetails.appendChild(nameEl);
+      userDetails.appendChild(usernameEl);
+      listItem.appendChild(userDetails);
+
+      userList.appendChild(listItem);
+    });
+    modalContent.appendChild(userList);
+  }
+
+  // Create the dismiss button
+  const dismissButton = document.createElement('button');
+  dismissButton.innerText = 'Dismiss';
+  dismissButton.style.marginTop = '20px';
+  dismissButton.addEventListener('click', () => {
+    document.body.removeChild(modalOverlay);
+  });
+  modalContent.appendChild(dismissButton);
+
+  modalOverlay.appendChild(modalContent);
+  document.body.appendChild(modalOverlay);
 }
