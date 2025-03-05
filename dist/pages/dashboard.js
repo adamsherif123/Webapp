@@ -278,6 +278,7 @@ function createEventCard(event, isOngoing) {
   let statsContent = `
     <h4>Stats</h4>
     <p><strong>Total RSVPs:</strong> <span id="rsvp-count-${uniqueId}">Loading...</span></p>
+    <p><strong> Gender Breakdown:</strong> <span id="gender-ratio-${uniqueId}">Loading...</span></p>
   `;
 
   if (isOngoing) {
@@ -307,13 +308,25 @@ function createEventCard(event, isOngoing) {
   // Fetch RSVP count and update UI
   const rsvpEl = card.querySelector(`#rsvp-count-${uniqueId}`);
   if (event.id) {
+    // Fetch total RSVP count (already in your code)
     fetchRsvpCount(event.id)
-      .then(count => {
-        rsvpEl.innerText = count;
-      })
-      .catch(() => {
-        rsvpEl.innerText = "N/A";
-      });
+    .then(count => {
+      rsvpEl.innerText = count;
+    })
+    .catch(() => {
+      rsvpEl.innerText = "N/A";
+    });
+
+    // Now fetch the gender ratio
+    const genderRatioEl = card.querySelector(`#gender-ratio-${uniqueId}`);
+    fetchRsvpGenderRatio(event.id)
+    .then(({ maleCount, femaleCount }) => {
+      // For example: "5 : 3"
+      genderRatioEl.innerText = `${maleCount} (M) : ${femaleCount} (F)`;
+    })
+    .catch(() => {
+      genderRatioEl.innerText = "N/A";
+    });
     
     // Make the RSVP element clickable for showing the modal
     rsvpEl.style.cursor = 'pointer';
@@ -335,6 +348,42 @@ async function fetchRsvpCount(eventId) {
   } catch (error) {
     console.error(`Error fetching RSVPs for event ${eventId}:`, error);
     return "N/A";
+  }
+}
+
+// gender breakdown
+async function fetchRsvpGenderRatio(eventId) {
+  try {
+    const rsvpCollectionRef = collection(db, 'publicEvents', eventId, 'rsvped-users');
+    const rsvpSnapshot = await getDocs(rsvpCollectionRef);
+
+    let maleCount   = 0;
+    let femaleCount = 0;
+    // Optional: handle non-binary/other. For simplicity, ignoring here:
+    // let otherCount = 0;
+
+    // For each RSVP doc, the doc ID is the user’s UID:
+    const fetches = rsvpSnapshot.docs.map(async (docSnap) => {
+      const userId = docSnap.id;
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+
+      if (userSnap.exists()) {
+        const userData = userSnap.data();
+        const gender   = userData.gender;
+        if (gender === 'Male')   maleCount++;
+        if (gender === 'Female') femaleCount++;
+        // else otherCount++;
+      }
+    });
+
+    // Wait for all user fetches
+    await Promise.all(fetches);
+
+    return { maleCount, femaleCount };
+  } catch (error) {
+    console.error(`Error fetching gender ratio for event ${eventId}:`, error);
+    return { maleCount: 0, femaleCount: 0 };
   }
 }
 
