@@ -25,28 +25,21 @@
     
             <!-- Menu Items -->
             <ul class="navbar__menu">
-                <!-- Home (visible for both logged in / logged out) -->
                 <li class="navbar__btn" data-page="dashboard.html">
-                <a href="dashboard.html" class="button">Home</a>
+                    <a href="dashboard.html" class="button">Home</a>
                 </li>
-                
                 <li class="navbar__btn" data-page="about-logged-in.html">
-                <a href="about-logged-in.html" class="button">About Us</a>
+                    <a href="about-logged-in.html" class="button">About Us</a>
                 </li>
-                
                 <li class="navbar__btn" data-page="createevent.html">
-                <a href="createevent.html" class="button">Create Event</a>
+                    <a href="createevent.html" class="button">Create Event</a>
                 </li>
                 <li class="navbar__btn" data-page="myevents.html">
-                <a href="myevents.html" class="button">My Events</a>
+                    <a href="myevents.html" class="button">My Events</a>
                 </li>
-        
-                <!-- Contact Us (visible for both) -->
                 <li class="navbar__btn" data-page="contact-logged-in.html">
-                <a href="contact-logged-in.html" class="button">Contact Us</a>
+                    <a href="contact-logged-in.html" class="button">Contact Us</a>
                 </li>
-
-                <!-- A user dropdown for account settings + logout -->
                 <li class="navbar__user">
                     <div class="user-dropdown" data-nav="account">
                         <span class="username">
@@ -54,8 +47,8 @@
                             <i class='bx bxs-user-circle'></i>
                         </span>
                         <div class="dropdown-content">
-                        <a href="./account-settings.html">Account Settings</a>
-                        <a href="./" id="logout-link">Log Out</a>
+                            <a href="./account-settings.html">Account Settings</a>
+                            <a href="./" id="logout-link">Log Out</a>
                         </div>
                     </div>
                 </li>                
@@ -63,75 +56,127 @@
         </div>
     </nav>
 
-  <!-- Main Dashboard Section -->
-  <div class="main dashboard-section">
-    <h1 id="welcome-title" class="dashboard-heading"></h1>
+    <!-- Main Dashboard Section -->
+    <div class="main dashboard-section">
+        <!-- Welcome Section with Quick Actions -->
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <h1 id="welcome-title" class="dashboard-heading"></h1>
+                <p class="welcome-subtitle">Welcome back! Here's what's happening with your events.</p>
+            </div>
+            <div class="quick-actions">
+                <a href="createevent.html" class="action-button">
+                    <i class='bx bx-plus-circle'></i>
+                    Create Event
+                </a>
+                <a href="myevents.html" class="action-button">
+                    <i class='bx bx-calendar'></i>
+                    View All Events
+                </a>
+            </div>
+        </div>
 
-    <!-- High-Level Statistics Row -->
-    <div class="stats-container">
-      <div class="stat-card">
-        <h2>Total Revenue</h2>
-        <p class="stat-value">$<span id="total-revenue">0</span></p>
-      </div>
-      <div class="stat-card">
-        <h2>Total Events</h2>
-        <p class="stat-value"><span id="total-events">0</span></p>
-      </div>
-      <div class="stat-card">
-        <h2>Total RSVPs</h2>
-        <p class="stat-value"><span id="total-rsvps">0</span></p>
-      </div>
-      <div class="stat-card">
-        <h2>Followers</h2>
-        <p class="stat-value"><span id="followers-count">0</span></p>
-      </div>
+        <!-- High-Level Statistics Row -->
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-dollar-circle'></i>
+                </div>
+                <div class="stat-content">
+                    <h2>Total Revenue</h2>
+                    <p class="stat-value">$<span id="total-revenue">0</span></p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-calendar-event'></i>
+                </div>
+                <div class="stat-content">
+                    <h2>Total Events</h2>
+                    <p class="stat-value"><span id="total-events">0</span></p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-user-check'></i>
+                </div>
+                <div class="stat-content">
+                    <h2>Total RSVPs</h2>
+                    <p class="stat-value"><span id="total-rsvps">0</span></p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class='bx bx-group'></i>
+                </div>
+                <div class="stat-content">
+                    <h2>Followers</h2>
+                    <p class="stat-value"><span id="followers-count">0</span></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Events Overview Section -->
+        <div class="events-overview">
+            <div class="events-section">
+                <div class="section-header">
+                    <h2>Ongoing Events</h2>
+                    <a href="myevents.html" class="view-all">View All</a>
+                </div>
+                <div class="event-preview" id="ongoing-events-list">
+                    <!-- JS will dynamically insert ongoing event cards here -->
+                </div>
+            </div>
+
+            <div class="events-section">
+                <div class="section-header">
+                    <h2>Upcoming Events</h2>
+                    <a href="myevents.html" class="view-all">View All</a>
+                </div>
+                <div class="event-preview" id="upcoming-events-list">
+                    <!-- JS will dynamically insert upcoming event cards here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links Section -->
+        <div class="dashboard-links-container">
+            <div class="quick-link-card">
+                <div class="quick-link-icon">
+                    <i class='bx bx-line-chart'></i>
+                </div>
+                <h3>Analytics Dashboard</h3>
+                <p>Track your event performance and insights.</p>
+                <a href="myevents.html" class="button">View Analytics</a>
+            </div>
+            <div class="quick-link-card">
+                <div class="quick-link-icon">
+                    <i class='bx bx-cog'></i>
+                </div>
+                <h3>Account Settings</h3>
+                <p>Manage your profile and preferences.</p>
+                <a href="account-settings.html" class="button">Settings</a>
+            </div>
+        </div>
     </div>
 
-    <!-- Ongoing & Upcoming Events Overview -->
-    <div class="events-overview-container">
-      <h2>Ongoing Events</h2>
-      <div class="event-preview" id="ongoing-events-list">
-        <!-- JS will dynamically insert ongoing event cards here -->
-      </div>
-
-      <h2>Upcoming Events</h2>
-      <div class="event-preview" id="upcoming-events-list">
-        <!-- JS will dynamically insert upcoming event cards here -->
-      </div>
+    <!-- Footer Section -->
+    <div class="footer__container">
+        <p>
+            We are constantly working to improve our product. For feedback/questions,
+            reach us at moves@email.com
+        </p>
     </div>
-
-    <!-- Quick Links to Manage or Create Events -->
-    <div class="dashboard-links-container">
-      <div class="quick-link-card">
-        <h3>Manage My Events</h3>
-        <p>View, edit, and track stats for your events.</p>
-        <a href="myevents.html" class="button">Go to My Events</a>
-      </div>
-      <div class="quick-link-card">
-        <h3>Create a New Event</h3>
-        <p>Start hosting right away. It’s easy!</p>
-        <a href="createevent.html" class="button">Create Event</a>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer Section -->
-  <div class="footer__container">
-    <p>
-      We are constantly working to improve our product. For feedback/questions,
-      reach us at moves@email.com
-    </p>
-  </div>
 
     <!-- Logout Confirmation Modal -->
     <div class="confirm-overlay" id="logout-confirm-overlay" style="display: none;">
         <div class="confirm-modal">
-        <h2>Confirm Logout</h2>
-        <p>Are you sure you want to log out?</p>
-        <div class="modal-buttons">
-            <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
-            <button class="btn modal-cancel-btn" id="logout-no">No</button>
-        </div>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-buttons">
+                <button class="btn modal-confirm-btn" id="logout-yes">Yes</button>
+                <button class="btn modal-cancel-btn" id="logout-no">No</button>
+            </div>
         </div>
     </div>
 
@@ -141,6 +186,5 @@
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-Dm7DsEmo5Gmqz4Pof8NK89V8Kb8LMO4&libraries=places&callback=initCreateEventMap"
     defer >
 </script>
-
 
 </html>

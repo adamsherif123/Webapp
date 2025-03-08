@@ -1,7 +1,8 @@
 // src/pages/accountSettings.js
-import { auth, db } from '../firebase.js';
+import { auth, db, storage } from '../firebase.js';
 import { updateProfile } from 'firebase/auth';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { showAlert } from '../utils/alerts.js';
 
 // Example multi-select data
@@ -129,7 +130,7 @@ export function initAccountSettings() {
         photoPreview.src = data.photoURL;
       }
 
-      // Also show the user’s org name on left
+      // Also show the user's org name on left
       const displayNameEl = document.getElementById('profile-display-name');
       if (displayNameEl) {
         displayNameEl.textContent = data.organizationName || 'Your Organization';
@@ -162,8 +163,18 @@ export function initAccountSettings() {
     // Possibly handle photo upload
     let newPhotoURL = null;
     if (photoInput && photoInput.files[0]) {
-      // TODO: actual storage upload
-      newPhotoURL = user.photoURL; // dummy
+      try {
+        // Upload the file to Firebase Storage
+        const storageRef = ref(storage, `profilePhotos/${user.uid}.jpg`);
+        await uploadBytes(storageRef, photoInput.files[0]);
+        
+        // Get the download URL
+        newPhotoURL = await getDownloadURL(storageRef);
+      } catch (err) {
+        console.error('Error uploading photo:', err);
+        showAlert('Error', 'Failed to upload photo. Please try again.');
+        return;
+      }
     }
 
     try {

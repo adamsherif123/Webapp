@@ -239,6 +239,87 @@ function formatTimestampOrString(value) {
   return isNaN(parsed.getTime()) ? value : parsed.toLocaleString();
 }
 
+// distance from user to event
+/**
+ * Returns the distance in meters between two lat/lng points using Haversine formula
+ */
+function getDistanceInMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371e3; // radius of Earth in meters
+  const toRad = (val) => (val * Math.PI) / 180;
+
+  const φ1 = toRad(lat1);
+  const φ2 = toRad(lat2);
+  const Δφ = toRad(lat2 - lat1);
+  const Δλ = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+    Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c; // in meters
+}
+
+/**
+ * For an ongoing event, compute how many users are physically at the event location.
+ * @param {Object} event - The event object (with .id, .latitude, .longitude)
+ * @returns {Promise<{count: number, male: number, female: number}>}
+ */
+async function fetchUsersCurrentlyAtEvent(event) {
+  // Safety checks
+  if (!event || !event.id || !event.latitude || !event.longitude) {
+    return { count: 0, male: 0, female: 0 };
+  }
+
+  const thresholdMeters = 100; // "Building width" threshold
+  let count = 0;
+  let male = 0, female = 0;
+
+  try {
+    // 1) Get the RSVP subcollection
+    const rsvpCollectionRef = collection(db, 'publicEvents', event.id, 'rsvped-users');
+    const rsvpSnapshot = await getDocs(rsvpCollectionRef);
+
+    // 2) For each RSVP doc, fetch the user from "users" collection
+    const tasks = rsvpSnapshot.docs.map(async (docSnap) => {
+      const userId = docSnap.id;
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+
+      if (!userSnap.exists()) return;
+
+      const userData = userSnap.data();
+      if (!userData.latitude || !userData.longitude) return; // skip if no location
+
+      // 3) Calculate distance
+      const distance = getDistanceInMeters(
+        event.latitude,
+        event.longitude,
+        userData.latitude,
+        userData.longitude
+      );
+
+      // 4) If within threshold, they are "at the event"
+      if (distance <= thresholdMeters) {
+        count++;
+        if (userData.gender === 'Male')   male++;
+        if (userData.gender === 'Female') female++;
+        // Could handle other / non-binary if you store that
+      }
+    });
+
+    // Wait for all user location fetches
+    await Promise.all(tasks);
+  } catch (err) {
+    console.error("Error fetching 'currently at event' data:", err);
+  }
+
+  return { count, male, female };
+}
+
+
+
 /**
  * Build an event card, using Firestore doc ID for the address element ID.
  */
@@ -283,8 +364,12 @@ function createEventCard(event, isOngoing) {
 
   if (isOngoing) {
     statsContent += `
-      <p><strong>Currently at Event:</strong> ***PLACEHOLDER***</p>
-      <p><strong>Gender (At Event):</strong> ***PLACEHOLDER***</p>
+      <p><strong>Currently at Event:</strong> 
+        <span id="live-count-${uniqueId}">Loading...</span>
+      </p>
+      <p><strong>Gender (At Event):</strong> 
+        <span id="live-gender-${uniqueId}">Loading...</span>
+      </p>
     `;
   }
 
@@ -336,6 +421,19 @@ function createEventCard(event, isOngoing) {
   } else {
     rsvpEl.innerText = "N/A";
   }
+
+  // If it’s ongoing, fetch the "at event" count
+  if (isOngoing && event.latitude && event.longitude) {
+    fetchUsersCurrentlyAtEvent(event).then(({ count, male, female }) => {
+      // Update the DOM
+      const liveCountEl = card.querySelector(`#live-count-${uniqueId}`);
+      const liveGenderEl = card.querySelector(`#live-gender-${uniqueId}`);
+
+      if (liveCountEl)   liveCountEl.innerText = count.toString();
+      if (liveGenderEl)  liveGenderEl.innerText = `${male} (M) : ${female} (F)`;
+    });
+  }
+
 
   return card;
 }
